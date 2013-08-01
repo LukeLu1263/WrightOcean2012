@@ -1,0 +1,137 @@
+/** game state switcher and felldown detector */
+option body_control 
+{
+  common decision 
+  {    
+    if(game.penalty != none)
+      goto penalized;
+    else if (game.state == _initial)
+      goto state_initial;
+    else if (game.state == finished)
+      goto state_finished;
+    else 
+    {
+      if(fall_down_state != upright && fall_down_state != undefined)
+        goto stand_up;
+      else
+      {
+        if (game.state == ready)
+          goto state_ready;
+        else if (game.state == set)
+          goto state_set;
+        else if (game.state == playing && role.role == keeper)
+          goto start_keeper; 
+          
+        else if (game.state == playing && game.kickoff_in_progress && game.pn == ball.strikerPn)
+          goto state_kickoff;
+        else if (game.state == playing && game.pn == ball.strikerPn)
+          goto start_striker;
+          
+        else if (game.state == playing && game.pn == ball.defensiveSupporterPn)
+          goto start_defender;
+          
+        else if (game.state == playing && game.pn == ball.offensiveSupporterPn)
+          goto start_supporter;
+      }
+    }
+  }
+  initial state state_initial 
+  {
+    action
+    {
+      head.control_mode = look_up;
+      motion.type = stand;
+    }
+  }
+  
+  state stand_up
+  {
+    action
+    {
+      stand_up();
+    }
+  }
+
+  state state_ready 
+  {
+    action
+    {      
+      ready_behavior();
+    }
+  }
+
+  state state_set 
+  {
+    action
+    {
+      head.control_mode = look_at_ball;
+      motion.type = stand;
+    }
+  }
+
+  state state_playing
+  {
+    action
+    {
+      playing_striker();
+    }
+  }
+
+  state state_finished 
+  {
+    action
+    {
+      head.control_mode = look_up;
+      motion.type = stand;    
+    }
+  }
+  
+  state state_kickoff
+  {
+    action
+    {
+      kickoff_behavior();
+    }
+  }
+  
+  state penalized
+  {
+    action
+    {
+      head.control_mode = look_down;
+      motion.type = stand;
+    }
+  }
+  state start_striker
+  {
+    action
+    {
+      playing_striker();
+    }
+  }
+  
+  state start_keeper
+  {
+    action
+    {
+      playing_keeper();
+    }
+  }
+  
+  state start_defender
+  {
+    action
+    {
+      playing_defender();
+    }
+  }
+  
+  state start_supporter
+  {
+    action
+    {
+      playing_supporter();
+    }
+  }
+
+}

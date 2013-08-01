@@ -1,0 +1,141 @@
+/* keeper冲上前去解围, 这里使用侧踢*/
+option keeper_clear_ball
+{
+	initial state start
+	{
+		decision
+		{
+			if(state_time > 333)
+				goto walk_to_ball;
+			else
+				stay;
+		}
+		action
+		{
+		}
+	}
+
+	state walk_to_ball
+	{
+		decision
+		{
+			if(ball.distance < 300)
+				goto decide_kick_keeper;
+			else
+				stay;
+		}
+		action
+		{
+			head.control_mode = look_at_ball;
+    		motion.type = walk;
+    		motion.walk_target.x = ball.x;
+    		motion.walk_target.y = 0;
+    		motion.walk_target.rot = ball.angle;
+    		motion.walk_speed = 100;
+		}
+	}
+
+	state decide_kick_keeper
+	{
+	    decision
+		{
+			if(ball.distance > 300)
+				goto walk_to_ball;
+			//前方没有障碍物
+			else if( !(obstacle.distance_to_closest_center <= 300 || (obstacle.vision.leftRatio > 0.9 || obstacle.vision.rightRatio < 0.9)) )
+				goto check_pose_for_bike;
+			
+     		else if((obstacle.distance_to_closest_center <= 300 || (obstacle.vision.leftRatio < 0.6 || obstacle.vision.rightRatio < 0.6)) && ball.position.field.y > 0)
+		  		goto side_kick_right;
+     		else if((obstacle.distance_to_closest_center <= 300 || (obstacle.vision.leftRatio < 0.6 || obstacle.vision.rightRatio < 0.6)) && ball.position.field.y < 0)
+    	 		goto side_kick_left;
+			else
+				stay;
+		}
+		action
+		{
+			// 向前踢.
+			walk_kick(id = ball.y > 0 ? left : right);
+			
+			// 使用左脚向右侧踢
+			//walk_kick(id = sidewards_left);
+			
+			// 使用右脚向左侧踢
+			//walk_kick(id = sidewards_right);
+		}
+	}
+	
+	state side_kick_right
+	{
+		action
+		{
+			// 使用左脚向右侧踢
+			walk_kick(id = sidewards_left);
+		}
+	}
+	
+	state side_kick_left
+	{
+		action
+		{
+			// 使用右脚向左侧踢
+			walk_kick(id = sidewards_right);
+		}
+	}
+
+   state check_pose_for_bike
+  {
+    decision
+    {
+      if( between( value = ball.y, min = 10, max = 50 ) 
+       && between( value = ball.x, min = 130, max = 180 )
+       && ball.was_seen)
+        goto prepare_kick;
+      else
+        stay;
+    }
+    action
+    {
+      motion.type = walk;
+      motion.walk_target.x = ball.x - 100;
+      motion.walk_target.y = ball.y + 30;
+      motion.walk_target.rot = ball.angle;
+      motion.walk_speed = ball.distance < 400 ? 50 : 100;
+      head.control_mode = look_at_ball;
+    }
+  }
+
+  state prepare_kick
+  {
+    decision
+    {
+      if(motion.kick_forward( x = ball.x, y = ball.y, mirror = false, updates = true)
+      && motion.type == stand)
+        goto kick;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_at_ball;
+      motion.type = stand;
+      motion.bike.mirror = true;
+    }
+  }
+
+  state kick
+  {
+  	decision
+  	{
+  		if(state_time > 3000)
+  			goto start;
+  		else
+  			stay;
+  	}
+    action
+    {
+      special_action(id = light_kick);
+      head.control_mode = look_at_ball;
+    }
+  }
+}

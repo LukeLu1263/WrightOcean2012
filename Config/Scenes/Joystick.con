@@ -1,0 +1,22 @@
+js 3 0.8 0.01 0.32 # head tilt axis
+js 4 1.7 0.01 # head pan axis
+
+js 2 1 0.01 # walk x axis
+js 1 1 0.01 # walk y axis
+js 5 1 0.01 # walk rotation axis
+
+# map r and l keys to the rotation axis
+jm 5 5 7 
+
+jc motion 1 set representation:HeadMotionRequest mode = panTiltMode; cameraControlMode = lowerCamera; pan = $4; tilt = $3; speed = 100; target = {x = 1; y = 0; z = 0;};
+
+# activate walk mode
+jc press 1 jc motion 2 set representation:MotionRequest motion = walk; specialActionRequest = {specialAction = playDead; mirror = false;}; walkRequest = { mode = targetMode; speed = { rotation = $5; translation = {x = $2; y = $1;}; }; target = { rotation = 0; translation = {x = 0; y = 0;}; }; pedantic = false; dribbling = false; dribbleTarget = { target = {x = 0; y = 0;}; dribbleSpeed = {x = 0; y = 0;}; ballPosition = { rotation = 0; translation = {x = 0; y = 0;}; }; left = false; }; kickType = none; kickBallPosition = {x = 0; y = 0;}; kickTarget = {x = 0; y = 0;}; }; bikeRequest = {bMotionType = none; mirror = false; dynamical = false; ballSpecial = false; dynPoints = [];};
+
+# deactivate walk mode
+jc press 3 jc motion 2 set representation:MotionRequest motion = stand; specialActionRequest = {specialAction = playDead; mirror = false;}; walkRequest = { mode = targetMode; speed = { rotation = $5; translation = {x = $2; y = $1;}; }; target = { rotation = 0; translation = {x = 0; y = 0;}; }; pedantic = false; dribbling = false; dribbleTarget = { target = {x = 0; y = 0;}; dribbleSpeed = {x = 0; y = 0;}; ballPosition = { rotation = 0; translation = {x = 0; y = 0;}; }; left = false; }; kickType = none; kickBallPosition = {x = 0; y = 0;}; kickTarget = {x = 0; y = 0;}; }; bikeRequest = {bMotionType = none; mirror = false; dynamical = false; ballSpecial = false; dynPoints = [];};
+
+# kicks 
+jc press 6 set representation:MotionRequest motion = bike; specialActionRequest = {specialAction = playDead; mirror = false;}; walkRequest = { mode = targetMode; speed = { rotation = 0; translation = {x = 0; y = 0;}; }; target = { rotation = 0; translation = {x = 0; y = 0;}; }; pedantic = false; dribbling = false; dribbleTarget = { target = {x = 0; y = 0;}; dribbleSpeed = {x = 0; y = 0;}; ballPosition = { rotation = 0; translation = {x = 0; y = 0;}; }; left = false; }; kickType = none; kickBallPosition = {x = 0; y = 0;}; kickTarget = {x = 0; y = 0;}; }; bikeRequest = {bMotionType = kickForward; mirror = false; dynamical = false; ballSpecial = false; dynPoints = [];};
+
+jc press 8 set representation:MotionRequest motion = bike; specialActionRequest = {specialAction = playDead; mirror = false;}; walkRequest = { mode = targetMode; speed = { rotation = 0; translation = {x = 0; y = 0;}; }; target = { rotation = 0; translation = {x = 0; y = 0;}; }; pedantic = false; dribbling = false; dribbleTarget = { target = {x = 0; y = 0;}; dribbleSpeed = {x = 0; y = 0;}; ballPosition = { rotation = 0; translation = {x = 0; y = 0;}; }; left = false; }; kickType = none; kickBallPosition = {x = 0; y = 0;}; kickTarget = {x = 0; y = 0;}; }; bikeRequest = {bMotionType = kickForward; mirror = true; dynamical = false; ballSpecial = false; dynPoints = [];};

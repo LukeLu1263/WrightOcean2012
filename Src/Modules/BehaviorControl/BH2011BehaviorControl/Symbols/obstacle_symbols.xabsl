@@ -1,0 +1,22 @@
+/** Symbols for accessing the obstacle/freespace perception */
+namespace obstacle_symbols("Obstacle Symbols") 
+{  
+  float input obstacle.distance_to_closest_center_left "mm";
+  float input obstacle.distance_to_closest_center_right "mm";
+  float input obstacle.distance_to_closest_center "mm";
+  float input obstacle.distance_to_closest "mm";
+  float input obstacle.angle_to_closest "deg";
+  float input obstacle.free_kick_angle_left "deg";
+  float input obstacle.free_kick_angle_right "deg";
+  bool  input obstacle.arm_left;
+  bool  input obstacle.arm_right;
+  // higher ratio, more green seen
+  float input obstacle.vision.leftRatio;
+  float input obstacle.vision.rightRatio;    
+  
+  float input obstacle.vision.leftRatioBall;
+  float input obstacle.vision.rightRatioBall;    
+  
+  float input obstacle.vision.leftRatioBallFiltered;
+  float input obstacle.vision.rightRatioBallFiltered;
+}

@@ -1,0 +1,177 @@
+option look_scan_area_in_front
+{  
+  initial state look_down_right
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 863)
+        goto look_down_left;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = -55;
+      head.tilt = -30;
+      head.speed = 100;
+    }
+  } 
+  
+  state look_down_left
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 863)
+        goto look_left_middle;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = 55;
+      head.tilt = -30;
+      head.speed = 100;
+    }  
+  }
+  
+  state look_left_middle
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 863)
+        goto look_right_middle;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = 55;
+      head.tilt = 10;
+      head.speed = 100;
+    }
+  } 
+  
+  state look_right_middle
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 863)
+        goto look_right_up;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = -55;
+      head.tilt = 10;
+      head.speed = 100;
+    }
+  } 
+  
+  state look_right_up
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 863)
+        goto look_left_up;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = -55;
+      head.tilt = 30;
+      head.speed = 100;
+    }  
+  }
+
+  state look_left_up
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 863)
+        goto look_left_middle_2;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = 55;
+      head.tilt = 30;
+      head.speed = 100;
+    }  
+  }
+
+  state look_left_middle_2
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 863)
+        goto look_right_middle_2;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = 55;
+      head.tilt = 10;
+      head.speed = 100;
+    }
+  }
+
+  state look_right_middle_2
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 863)
+        goto look_down_right;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = -55;
+      head.tilt = 10;
+      head.speed = 100;
+    }
+  }
+
+  state look_at_ball
+  {
+    decision
+    {
+      if (state_time > 2000)
+        goto look_down_right;
+      else
+        stay;
+    }    
+    action
+    {
+      head.control_mode = look_at_ball;
+    }
+  }
+}

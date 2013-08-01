@@ -1,0 +1,17 @@
+<Simulation>
+
+  <Scene name="RoboCup" stepLength="0.01" color="rgb(65%, 65%, 70%)" ERP="0.8" CFM="0.001" contactSoftERP="0.2" contactSoftCFM="0.005">
+    <!-- <QuickSolver iterations="100" skip="2"/>  -->
+    <Light z="9m" ambientColor="rgb(50%, 50%, 50%)"/>
+    
+    <Compound name="robots">
+    </Compound>
+
+    <Compound name="extras">
+    </Compound>
+
+    <Compound name="balls">
+    </Compound>
+    
+  </Scene>
+</Simulation>

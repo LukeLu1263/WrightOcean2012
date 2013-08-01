@@ -1,0 +1,42 @@
+/** Symbols for accessing information about the opponent's goal */
+namespace goal_symbols("Goal Symbols") 
+{
+  /** angle to the center of the largest free part of the opponent goal */
+  float input opponent_goal.free_part.angle_to_center "deg";
+  
+  /** angle to the that side of the largest free part of the opponent goal farthest from the center of the opponent goal */
+  float input opponent_goal.free_part.angle_to_outer_side "deg";
+  
+  /** angle to the that side of the largest free part of the opponent goal nearest to the center of the opponent goal */
+  float input opponent_goal.free_part.angle_to_inner_side "deg";
+  
+  /** width of opening angle of largest free part of opponent goal */
+  float input opponent_goal.free_part.angle_width "deg";
+
+  /** tolerance to angle to the center of the largest free part of opponent goal (how accurate the robot will be positioned) */
+  float input opponent_goal.free_part.angle_tolerance "deg";
+
+  /** time since the opponent goal was last seen in ms */
+  float input opponent_goal.time_since_last_seen "ms";
+  
+  /** whether opponent goal was seen in the last 500 ms */
+  bool input opponent_goal.was_seen;
+  
+  /** time since the any goal was last seen in ms */
+  float input goal.time_since_last_seen_any_goal "ms";
+  
+  /** time since the any goal was last seen in ms */
+  float input goal.time_since_last_seen "ms";
+  
+  /** whether any goal was seen in the last 500 ms */
+  bool input goal.was_seen;
+  
+  /** count the number of seen goal posts in current ready state */
+  float input goal.number_of_sightings_in_ready;
+
+  /** count the number of seen goal posts since last pickup */
+  float input goal.number_of_sightings_since_last_pickup;
+  
+  float input goal.angle_to_last_seen;
+  float input goal.distance_to_last_seen;
+}

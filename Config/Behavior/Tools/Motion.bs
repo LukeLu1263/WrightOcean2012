@@ -1,0 +1,192 @@
+requires "BH"
+requires "Common.bs"
+
+func stand()
+  output.motion.motion = BH::Motion::stand
+
+#======================================
+#walk
+#======================================
+func walk(float x, float y, float theta)
+  output.motion.motion = BH::Motion::walk
+  output.motion.walk.mode = BH::WalkMode::percentage
+  output.motion.walk.speed.translation.x = x
+  output.motion.walk.speed.translation.y = y
+  output.motion.walk.speed.rotation = theta
+  output.motion.walk.kickType = BH::WalkKickType::none
+
+func walkOnSpot()
+  walk(0.0, 0.0, 0.0)
+
+#======================================
+#walkTo...Raw
+#======================================
+func walkToXYRaw(float x, float y, float r, float speed)
+  output.motion.motion = BH::Motion::walk
+  output.motion.walk.mode = BH::WalkMode::target
+  output.motion.walk.target.translation.x = x
+  output.motion.walk.target.translation.y = y
+  output.motion.walk.target.rotation = r
+  output.motion.walk.speed.translation.x = speed
+  output.motion.walk.speed.translation.y = speed
+  output.motion.walk.speed.rotation = speed
+  output.motion.walk.kickType = BH::WalkKickType::none
+
+func walkToPoseRaw(Math::Pose2D pose, float speed)
+  output.motion.motion = BH::Motion::walk
+  output.motion.walk.mode = BH::WalkMode::target
+  output.motion.walk.target = pose
+  output.motion.walk.speed.translation.x = speed
+  output.motion.walk.speed.translation.y = speed
+  output.motion.walk.speed.rotation = speed
+  output.motion.walk.kickType = BH::WalkKickType::none
+
+#======================================
+#walkTo...
+#======================================
+task walkToPose(Math::Pose2D target, float speed, bool rough)
+  #=====================================
+  func stopAligning(Math::Pose2D target, float walkRotation) : bool
+    return target.translation.abs() < 700 or walkRotation < Math::fromDegrees(10.0)
+
+  func needsAligning(Math::Pose2D target, float walkRotation) : bool
+    return target.translation.abs() > 800 and walkRotation > Math::fromDegrees(25.0)
+
+  func getWalkRotation(Math::Vector2f target) : float
+    if(input.time - input.ball.lastSeen > 5000)
+      return target.angle()
+    if(input.game.state == BH::GameState::ready)
+      return target.angle()
+
+    #max rotation offset to ball is 45 Degree
+    float angle = target.angle()
+    float offset = angle - input.ball.model.position.angle()
+    if(Math::fabs(offset) > Math::fromDegrees(45.0))
+      offset = Math::sgnf(offset) * Math::fromDegrees(45.0)
+    angle = Math::normalize(input.ball.model.position.angle() + offset)
+    return angle
+  #=====================================
+
+  for(; true;)
+
+    #align if far away or way of
+    for(; true; yield)
+      float walkRotation = getWalkRotation(target.translation)
+      if(stopAligning(target, walkRotation))
+        break
+      output.walkTo(0.0, 0.0, walkRotation, 100.0, rough)
+
+    #go for it
+    bool targetAlign = false
+    float targetDist
+    float rotation
+    for(; true; yield)
+      float walkRotation = getWalkRotation(target.translation)
+      if(needsAligning(target, walkRotation))
+        break
+
+      targetDist = target.translation.abs()
+      if(targetDist < 200)
+        targetAlign = true
+      else if(targetDist > 400)
+        targetAlign = false
+
+      if(targetAlign)
+        rotation = target.rotation
+      else
+        rotation = walkRotation
+
+      output.walkTo(target.translation.x,
+                    target.translation.y,
+                    rotation,
+                    speed,
+                    rough)
+
+task walkToXYR(float x, float y, float theta, float speed, bool rough)
+  Math::Pose2D target
+
+  for(; true; yield taskState(walkToPose))
+    target.translation.x = x
+    target.translation.y = y
+    target.rotation = theta
+    walkToPose(target, speed, rough)
+
+task walkToXYRField(float x, float y, float theta, float speed, bool rough)
+  Math::Pose2D target
+
+  for(; true; yield taskState(walkToPose))
+    target.translation.x = x
+    target.translation.y = y
+    target.rotation = theta
+    walkToPose(Common::field2RelativePose(target), speed, rough)
+
+task walkToPoseField(Math::Pose2D target, float speed, bool rough)
+  for(; true; yield taskState(walkToPose))
+    walkToPose(Common::field2RelativePose(target), speed, rough)
+
+#======================================
+#special action
+#======================================
+func setSpecialAction(int specialAction, bool mirror)
+  output.motion.motion = BH::Motion::specialAction
+  output.motion.specialAction.specialAction = specialAction
+  output.motion.specialAction.mirror = mirror
+
+task executeSpecialAction(int specialAction, bool mirror)
+  int executedAction = specialAction 
+  for(; input.motionInfo.motion != BH::Motion::specialAction or \
+        input.motionInfo.specialAction.specialAction != executedAction; yield)
+    setSpecialAction(specialAction, mirror)
+    executedAction = specialAction
+
+  for(; input.motionInfo.motion == BH::Motion::specialAction and \
+        input.motionInfo.specialAction.specialAction == executedAction; yield)
+    stand()
+
+#======================================
+#bike
+#======================================
+task executeBikeMotion(int bmotion, bool mirror)
+  int executedMotion = bmotion
+  for(; input.motionInfo.bike.bMotion != executedMotion or \
+        input.motionInfo.motion != BH::Motion::bike; yield)
+    output.setBikeDynPoints(bmotion, input.ball.model.position, mirror)
+    executedMotion = bmotion
+
+  for(; input.motionInfo.motion == BH::Motion::bike and \
+        input.motionInfo.bike.bMotion == executedMotion; yield)
+    output.setBikeDynPoints(bmotion, input.ball.model.position, mirror)
+    stand()
+
+#======================================
+#walking engine kicks
+#======================================
+task executeWalkingEngineKick(int kickType)
+  int executedKick = kickType
+  #set output signal until motion agent reacts
+  for(; input.motionInfo.walk.kickType != executedKick or \
+        input.motionInfo.motion != BH::Motion::walk; yield)
+    output.motion.walk.kickType = kickType
+    executedKick = kickType
+
+  #reset output signal and wait until kick is finished
+  for(; input.motionInfo.walk.kickType == executedKick and \
+        input.motionInfo.motion == BH::Motion::walk; yield)
+    output.motion.walk.kickType = BH::WalkKickType::none
+
+#======================================
+#executeKick
+#======================================
+task executeKick(int kickType, bool mirror)
+  #make a copy of mirror, so it does not change during execution
+  bool internalMirror = mirror
+
+  if(kickType == BH::KickType::bikeForward)
+    for(; true; yield)
+      executeBikeMotion(BH::Bike::kickForward, internalMirror)
+      if(taskState(executeBikeMotion) == TaskState::done)
+        break
+
+  #else if(kickType == ...)
+  #   add other kicks....
+

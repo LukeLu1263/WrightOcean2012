@@ -1,0 +1,37 @@
+option look_at_ball
+{
+  initial state look_at_estimate
+  {
+    decision
+    {
+      if(ball.time_since_last_seen > 2500)
+      	goto look_up_and_down;
+      else
+      	stay;
+    }
+    action
+    {
+      head.mode = target_on_ground;
+      head.ccmode = autoCamera;
+      head.target.x = ball.x;
+      head.target.y = ball.y;
+      head.target.z = 35;
+      head.speed = 100;
+    }
+  }
+
+  state look_up_and_down
+  {
+    decision
+    {
+      if(ball.was_seen)
+        goto look_at_estimate;
+      else
+      	stay;
+    }
+    action
+    {
+      look_up_and_down();
+    }
+  }
+}

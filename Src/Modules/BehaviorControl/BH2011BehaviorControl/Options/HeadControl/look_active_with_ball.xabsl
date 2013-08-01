@@ -1,0 +1,11 @@
+option look_active_with_ball
+{
+  initial state look_active
+  {
+    action
+    {
+      look_active();
+      head.active_vision_ball_factor = 1.0;
+    }
+  }
+}

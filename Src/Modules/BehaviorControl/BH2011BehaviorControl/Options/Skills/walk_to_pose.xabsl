@@ -1,0 +1,190 @@
+option walk_to_pose
+{    
+  float @x;
+  float @y;
+  float @angle;
+
+  initial state start
+  {
+    decision{
+      if(locator.distance_to(x=@x,y=@y)>500){
+        goto turn_to_target;
+      }else
+        goto turn;
+    }
+    action
+    { 
+    }
+  }
+
+  /*state shift{
+    decision{
+      //stay;
+      //goto finish;
+      //if((locator.distance_to(x = @x, y = @y) < 250 && abs(value = @angle) < 15) || state_time>4000 )
+      //  goto finish;
+      //else
+      //  stay;
+    }
+    action{
+      head.control_mode = look_localization;
+      motion.type = walk;
+      motion.walk_target.x = (abs(value=@angle-locator.pose.angle)>10)?0:locator.field_to_relative.x(x = @x, y = @y);
+      motion.walk_target.y = (abs(value=@angle-locator.pose.angle)>10)?0:locator.field_to_relative.y(x = @x, y = @y);
+      motion.walk_target.rot = @angle-locator.pose.angle;
+      motion.walk_speed=100;
+    }
+  }*/
+
+  state turn_to_target
+  {
+    decision
+    {
+      if(abs(value = locator.angle_to(x = @x, y = @y)) < 5)
+        goto go_to_target;
+      else
+        stay;
+    }
+    action
+    {
+      motion.type = walk;
+      motion.walk_target.x = 0; 
+      motion.walk_target.y = 0;
+      motion.walk_target.rot = locator.angle_to(x = @x, y = @y); 
+      motion.walk_speed = 80;
+
+      //head.control_mode = look_localization;
+      head.use_active_vision = true;
+      head.active_vision_ball_factor = 0.7;
+      head.speed = 100;
+    }
+  }
+
+  state go_to_target
+  {
+    decision
+    {
+      //if(obstacle.distance_to_closest_obstacle < 300){
+      if (obstacle.distance_to_closest < 350) {
+        //goto avoid;
+        goto sonar_avoid;
+      }else if(locator.distance_to(x = @x, y = @y) < 300)
+        goto turn;
+      else if(abs(value = locator.angle_to(x = @x, y = @y)) > 10)
+        goto turn_to_target;
+      else
+        stay;
+	  }
+    action
+    {
+      motion.type = walk;
+      motion.walk_target.x = locator.field_to_relative.x(x = @x, y = @y); 
+      motion.walk_target.y = locator.field_to_relative.y(x = @x, y = @y);
+      motion.walk_target.rot = 0; //FIXME ball.angle; 
+      motion.walk_speed = (obstacle.distance_to_closest < 500)?80:150;
+
+      //head.control_mode = look_localization;      
+      head.use_active_vision = true;
+      head.active_vision_ball_factor = 0.7;
+      head.speed = 100;
+    }
+  }
+
+  state sonar_avoid {
+    decision {
+      if (obstacle.distance_to_closest > 500 && state_time > 700) 
+        goto go_to_target;      
+      else if ((obstacle.vision.leftRatio < 0.9 || obstacle.vision.rightRatio < 0.9))
+        goto sonar_vision_avoid;
+      else if (locator.distance_to(x = @x, y = @y) < 300)
+        goto sonar_avoid_turn;
+      else
+        stay;
+    }
+    action {
+      motion.type = walk;
+      motion.walk_target.x = locator.field_to_relative.x(x = @x, y = @y); 
+      motion.walk_target.y = locator.field_to_relative.y(x = @x, y = @y);
+      motion.walk_target.rot = 0; //FIXME ball.angle; 
+      motion.walk_speed = 60;
+        
+      head.control_mode = look_avoid;        
+    }
+  }
+  
+  state sonar_avoid_turn {
+    decision {
+      if(abs(value = locator.pose.angle-@angle) < 5)
+        goto finish;
+      else if (obstacle.distance_to_closest > 500 && state_time > 700) 
+        goto turn;
+      else if ((obstacle.vision.leftRatio < 0.9 || obstacle.vision.rightRatio < 0.9))
+        goto sonar_vision_avoid;
+      else
+        stay;
+    }
+    action {
+      motion.type = walk;
+      motion.walk_target.x = 0;
+      motion.walk_target.y = 0;
+      motion.walk_target.rot = @angle-locator.pose.angle;
+      motion.walk_speed = 80;
+        
+      head.control_mode = look_avoid;        
+    }
+  }
+
+  state sonar_vision_avoid {
+    decision {
+      if (action_done)
+        goto go_to_target;
+      else
+        stay;        
+    }
+    action {
+      striker_avoid();
+    }
+  }
+
+
+  state turn
+  {
+    decision
+    {
+      if(abs(value = locator.pose.angle-@angle) < 5)
+        goto finish;
+      else
+        stay;
+    }
+    action
+    {
+      motion.type = walk;
+      motion.walk_target.x = 0;
+      motion.walk_target.y = 0;
+      motion.walk_target.rot = @angle-locator.pose.angle;
+      motion.walk_speed = 80;
+
+      //head.control_mode = look_localization;
+      head.use_active_vision = true;
+      head.active_vision_ball_factor = 0.7;
+      head.speed = 100;
+    }
+  }
+
+
+
+
+
+  target state finish{
+    decision{
+      stay;
+    }
+    action{
+      motion.type = stand;
+      head.control_mode = look_localization;
+    }
+
+  }
+
+
+}

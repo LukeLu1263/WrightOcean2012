@@ -1,0 +1,107 @@
+/* Symbols for accessing the data from the game controller object */
+namespace game_symbols("Game Control Symbols") {
+
+  /* Enumeration for team colors */
+  enum game.team_color
+  {
+    blue,
+    red,
+    none
+  };
+
+  enum game.drop_in_team_color
+  {
+    blue,
+    red,
+    none
+  };
+  
+  /* Enumeration for game states */
+  enum game.state
+  {
+    _initial,
+    ready,
+    set,
+    playing,
+    finished
+  };
+  
+   /* Enumeration for secondary game state */
+  enum game.secondary_state
+  {
+    normal,
+    penaltyshoot
+  };
+  
+  /* Enumeration for penalty mode */
+  enum game.penalty
+  {
+    none,
+    ball_holding,
+    player_pushing,
+    obstruction,
+    inactive_player,
+    illegal_defender,
+    leaving_the_field,
+    playing_with_hands,
+    request_for_pickup,
+    manual
+  };
+
+  /* Own team color */
+  enum game.team_color output game.team_color;
+
+  /* Current Penalty mode */
+  enum game.penalty output game.penalty;
+
+  /* Remaining penalty time */
+  float input game.penalty.remaining_time [secs];
+
+  /* State of the game */
+  enum game.state output game.state;
+  
+  /* Time since last time being in initial state */
+  float input game.time_since_initial;
+
+  /* Kickoff team */
+  enum game.team_color output game.kickoff_team;
+
+  /* extra state information - (normal or penaltyshoot, etc) */
+  enum game.secondary_state output game.secondary_state;
+
+  /* The color of the opponent team. */
+  enum game.team_color input game.opponent_team_color;
+
+  /* Number of our scored goals */
+  float input game.own_score [0-10];
+
+  /* Number of our scored goals */
+  float input game.opponent_score [0-10];
+
+  /* Remaining game time */
+  float input game.remaining_time;
+
+  /*  time since switching to playing state */
+  float input game.time_since_playing_started;
+
+  /* color of the team, which caused a drop in */
+  enum game.team_color output game.drop_in_team;
+
+  /* time since the last drop in */
+  float output game.drop_in_time;
+
+  /* how much time has passed since last penalization*/
+  float input game.time_since_last_penalization;
+
+  /* the time elapsed since the last package was received from game controller */
+  float input game.time_since_last_package_received;
+  
+  /* whether the pre initial state is disabled (in simulation or after framework restart because of a crash) */
+  bool input game.disable_pre_initial;
+  
+    /* decision if kickoff is in progress*/
+  bool input game.kickoff_in_progress;
+
+  float input game.pn;
+}
+

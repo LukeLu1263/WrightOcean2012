@@ -1,0 +1,54 @@
+/** Symbols for how to move the head */
+namespace head_symbols("Head Symbols")
+{
+  /** The head motion modes */
+  enum head.mode {
+    pan_tilt,
+    _target,
+    target_on_ground
+  };
+
+  /** The active head motion mode */
+  enum head.mode output head.mode;
+
+  /** The camera control modes. */
+  enum head.ccmode {
+    autoCamera,
+    lowerCamera,
+    upperCamera
+  };
+
+  /** The active camera control mode. */
+  enum head.ccmode output head.ccmode;
+  
+  /** The target neck tilt joint angle (used in pan_tilt mode) */
+  float output head.tilt "deg";
+
+  /** The target head pan joint angle (used in pan_tilt mode) */
+  float output head.pan "deg";
+
+  /** The maximum speed of the head joints (used in pan_tilt and target mode) */
+  float output head.speed "deg/s";
+
+  /** The x-component of a look-at-point target (used in target mode) */
+  float output head.target.x "mm";  
+  /** The y-component of a look-at-point target (used in target mode) */
+  float output head.target.y "mm";
+  /** The z-component of a look-at-point target (used in target mode) */
+  float output head.target.z "mm";
+
+  /** Whether the head is currently in motion or not */
+  bool input head.is_moving;
+  
+  /** Whether the head motion request points on a reachable position */
+  bool input head.is_reachable;
+
+  /** Activates the ActiveVision module */
+  bool output head.use_active_vision;
+
+  /** The ball factor for the ActiveVision module */
+  float output head.active_vision_ball_factor;
+
+  /** (head.sfb_boundary, 0) is the most distant point to scan for the ball. */
+  float input head.sfb_boundary "mm";
+}

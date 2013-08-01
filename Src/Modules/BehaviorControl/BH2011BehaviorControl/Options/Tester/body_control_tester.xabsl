@@ -1,0 +1,97 @@
+/** game state switcher and felldown detector */
+option body_control_tester 
+{
+  common decision 
+  {    
+    if(game.penalty != none)
+      goto penalized;
+    else if (game.state == _initial)
+      goto state_initial;
+    else if (game.state == finished)          
+      goto state_finished;
+    else 
+    {
+      if(fall_down_state != upright && fall_down_state != undefined)
+        goto stand_up;
+      else
+      {
+        if (game.state == ready)
+          goto state_ready;
+        else if (game.state == set)
+          goto state_set;
+        else if (game.state == playing)
+          goto state_playing;
+      }
+    }
+  }
+
+  initial state state_initial 
+  {
+    action
+    {
+      head.control_mode = look_up;
+      motion.type = stand;
+    }
+  }
+  
+  state stand_up
+  {
+    action
+    {
+      stand_up();
+    }
+  }
+
+  state state_ready 
+  {
+    action
+    {
+      head.control_mode = look_down;
+      motion.type = stand;
+      //walk_to_point(x = -2200, y = 0);
+    }
+  }
+
+  state state_set 
+  {
+    decision
+	{
+  	  else if(action_done)
+  		goto stand_up;
+  	  else
+  		stay;
+	}
+    action
+    {
+      head.control_mode = look_up;
+      motion.type = stand;
+      //walk_omnidirectional(x = 2000, y = 1500, angle = 90);
+    }
+  }
+
+  state state_playing
+  {
+    action
+    {
+      playing_tester();
+    }
+  }
+
+  state state_finished 
+  {
+    action
+    {
+      head.control_mode = look_up;
+      motion.type = stand;    
+    }
+  }
+
+  state penalized
+  {
+    action
+    {
+      head.control_mode = look_down;
+      motion.type = stand;
+    }
+  }
+}

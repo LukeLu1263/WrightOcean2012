@@ -1,0 +1,43 @@
+# activate simulation time
+st on
+
+# in case we have more than a single robot
+
+robot all
+
+# Select modules for simulator
+mr Image CognitionLogDataProvider
+mr CameraInfo CognitionLogDataProvider
+mr FrameInfo CognitionLogDataProvider
+mr JointData MotionLogDataProvider
+mr SensorData MotionLogDataProvider
+mr KeyStates MotionLogDataProvider
+mr FrameInfo MotionLogDataProvider
+mr GroundTruthRobotPose CognitionLogDataProvider
+mr GroundTruthBallModel CognitionLogDataProvider
+mr ImageInfo CognitionLogDataProvider
+mr SoundOutput off
+
+# joint, LED, and image request are required by simulation
+dr representation:JointRequest
+dr representation:LEDRequest
+dr representation:ImageRequest
+
+# request behavior symbols
+dr automatedRequests:xabsl:debugSymbols once
+dr automatedRequests:xabsl:debugMessages
+
+xis game.pn on 
+
+robot robot1
+xos role.role keeper
+robot robot2
+xos role.role striker
+
+robot robot5
+xos role.role keeper
+robot robot6
+xos role.role striker
+
+robot all
+call GameStates

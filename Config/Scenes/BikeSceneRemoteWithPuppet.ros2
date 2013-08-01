@@ -1,0 +1,28 @@
+<Simulation>
+
+  <Include href="NaoV3.2RWithV3.3RArms.rsi2"/>
+  <Include href="Ball2010SPL.rsi2"/>
+  <Include href="Field2010SPL.rsi2"/>
+
+  <Scene name="RoboCup" stepLength="0.01" color="rgb(50%, 50%, 50%)" ERP="0.8" CFM="0.001" contactSoftERP="0.2" contactSoftCFM="0.005">
+    <!-- <QuickSolver iterations="100" skip="2"/>  -->
+    <Light z="9m" ambientColor="rgb(50%, 50%, 50%)"/>
+    
+    <Compound name="puppets">
+      <Body ref="Nao" name="puppet1">
+        <Translation z="300mm"/>
+       </Body>
+    </Compound>
+
+    <Compound name="extras">
+    </Compound>
+
+    <Compound name="balls">
+    </Compound>
+
+    <Compound name="field">
+      <Compound ref="field"/>
+    </Compound>
+    
+  </Scene>
+</Simulation>

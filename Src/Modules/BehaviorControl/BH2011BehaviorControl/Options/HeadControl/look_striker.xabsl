@@ -1,0 +1,95 @@
+/** The base option for the head control behavior */
+
+option look_striker
+{
+  initial state look_at_ball_left
+  {
+    decision
+    {
+      if(state_time > 1500 && ball.was_seen)
+        goto look_up_left;
+      else
+        stay;
+    }
+    action
+    {
+      look_at_ball();
+    }
+  }
+
+  state look_at_ball_right
+  {
+    decision
+    {
+      if(state_time > 1500 && ball.was_seen)
+        goto look_up_right;
+      else
+        stay;
+    }
+    action
+    {
+      look_at_ball();
+    }
+  }
+
+  state look_up_left
+  {
+    decision
+    {
+      if(state_time > 500 || head.is_reachable)
+        goto look_left;
+      else
+        stay;
+    }
+    action
+    {
+      look_up();
+    }
+  }
+
+  state look_left
+  {
+    decision
+    {
+      if(state_time > 1000 ||head.is_reachable)
+        goto look_at_ball_right;
+      else
+        stay;
+    }
+    action
+    {
+      look_left();
+    }
+  }
+
+  state look_up_right
+  {
+    decision
+    {
+      if(state_time > 500 || head.is_reachable)
+        goto look_right;
+      else
+        stay;
+    }
+    action
+    {
+      look_up();
+    }
+  }
+
+  state look_right
+  {
+    decision
+    {
+      if(state_time > 1000 || head.is_reachable)
+        goto look_at_ball_left;
+      else
+        stay;
+    }
+    action
+    {
+      look_right();
+    }
+  }
+}
+

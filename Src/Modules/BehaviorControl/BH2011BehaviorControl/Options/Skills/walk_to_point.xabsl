@@ -1,0 +1,61 @@
+/** Go to a specific position on the field */
+option walk_to_point
+{
+
+  /** x position of the point to walk to on the field */
+  float @x [-3000..3000] "mm";
+
+  /** y position of the point to walk to on the field */
+  float @y [-2000..2000] "mm";
+
+  initial state stand
+  {
+    decision
+    {
+      if(abs(value = locator.pose.x - @x) > 150 || abs(value = locator.pose.y - @y) > 150 || locator.angle_to(x = @x, y = @y) > 15)
+        goto turn;
+      else
+        stay;
+    }
+    action
+    {
+      motion.type = stand;
+    }
+  }
+
+state turn
+{
+  decision
+  {
+    if(locator.angle_to(x = @x, y = @y) < 10)
+      goto walk;
+    else
+      stay;
+  }
+  action
+  {
+    motion.type = walk;
+    motion.walk_speed.x = 0;
+    motion.walk_speed.y = 0;
+    motion.walk_speed.rot = locator.angle_to(x = @x, y = @y) / 3;
+  }
+}
+
+  state walk
+  {
+    decision
+    {
+      if(abs(value = locator.pose.x - @x) < 100 && abs(value = locator.pose.y - @y) < 100)
+        goto stand;
+      else
+        stay;
+    }
+    action
+    {
+      motion.type = walk;
+      motion.walk_speed.x = locator.field_to_relative.x(x = @x, y = @y) / 4;
+      motion.walk_speed.y = 0;
+      motion.walk_speed.rot = locator.angle_to(x = @x, y = @y) / 3;
+    }
+  }
+}

@@ -1,0 +1,74 @@
+option kickoff_behavior
+{
+  common decision 
+  {
+    if(ball.time_since_last_seen > 5000)
+      goto search;
+  }
+
+
+  initial state decide_behavior
+  {
+    decision {
+      else if(game.pn == ball.strikerPn)
+        goto decide_kick;
+      else
+        stay;
+    }
+    action {
+      motion.type = stand;
+      head.control_mode = look_at_ball;
+    }
+  }
+  
+  state search
+  {
+    decision
+    {
+      else if(ball.was_seen) {
+        goto decide_behavior;
+      } else {
+        stay;
+      }
+    }
+    action
+    {
+      motion.type = walk;
+      motion.walk_speed.y = 0;
+      motion.walk_speed.rot = 30; 
+      motion.walk_speed.x = 0;
+      head.control_mode = look_up_and_down;
+    }
+  }
+
+    state decide_kick
+	{
+		decision
+		{
+			else if(ball.distance < 300)
+				goto quick_kick_forward;
+			else
+				stay;
+		}
+		action
+		{
+			head.control_mode = look_at_ball;
+    		motion.type = walk;
+    		motion.walk_target.x = ball.x;
+    		motion.walk_target.y = 0;
+    		motion.walk_target.rot = ball.angle;
+    		motion.walk_speed = 100;
+		}
+	}
+
+
+	state quick_kick_forward
+	{
+	action
+	{
+		walk_kick(id = sidewards_right);
+	}
+	}
+
+
+}

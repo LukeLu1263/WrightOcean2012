@@ -1,0 +1,18 @@
+/** lets the robot look to the right */
+option look_right
+{
+  initial state look_right
+  {
+    decision
+    {
+      stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = -50;
+      head.tilt = 30;
+      head.speed = 150;
+    }
+  }
+}

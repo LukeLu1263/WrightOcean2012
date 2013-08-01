@@ -1,0 +1,120 @@
+/** A simple striker */
+option playing_striker
+{
+    common decision
+  {
+//球超过5秒没被发现
+    if(ball.time_since_last_seen > 5000)
+        goto search;
+//进球了
+	else if(ball.position.field.x >=3000&&ball.position.field.y<700&&ball.position.field.y>-700)
+		goto game_over;
+        
+
+//如果障碍物在球前方，且障碍物与机器人之间的左侧的距离小于500
+else if(obstacle.distance_to_closest_center_left<500&&(ball.distance>obstacle.distance_to_closest_center_left))
+//向右平移
+        goto side_right_obs;
+        
+//如果障碍物在球前方，且障碍物与机器人之间的右侧的距离小于500
+else if(obstacle.distance_to_closest_center_right<500&&(ball.distance>obstacle.distance_to_closest_center_right))
+//向左平移
+        goto side_left_obs;
+//若球在己方禁区线内
+else if( (between(value=ball.position.field.x,min=-3000,max=-2400))&&(between(value=ball.position.field.y,min=-1000,max=1000) ))
+		goto wait_the_ball;	
+
+        
+//若球在对方球门边界线附近
+else if((between(value=ball.position.field.x,min=2700,max=3000) )&&(between(value=abs( value = ball.position.field.y ) ,min=1100,max=2000)))
+		goto pass_before_goal;
+		
+//如果机器人离球距离小于300
+else if(ball.x < 300 && ball.was_seen)
+        goto kick;
+
+//如果球在视野内且障碍物距离超过500，就转向球并移动
+else if(ball.was_seen&& (   (obstacle.distance_to_closest_center_left>=500) && ( obstacle.distance_to_closest_center_right>=500)  )&&ball.x>300)
+        goto turn_to_ball;
+   }
+
+
+   initial state stand
+  {
+   action
+    {
+      head.control_mode =  look_active_with_ball;
+      motion.type = walk;
+	  motion.walk_target.x=team.ball.x(player=team.mate.player1);
+	// motion.walk_target.y=locator.pose.y(x=team.ball.x(player=team.mate.player1),y=team.ball.y(player=team.mate.player1));
+	  head.speed = 100;
+    }  
+  }
+
+  state search 
+  {
+    action 
+    {
+      search();
+    }
+  }
+
+  state kick 
+  {
+    action 
+    {
+      kick();
+    }
+  }
+
+  state side_right_obs 
+  {
+    action 
+    {
+      side_right_obs();
+    }
+  }
+
+  state side_left_obs
+ {
+    action 
+    {
+      side_left_obs();
+    }
+  }
+
+  state turn_to_ball 
+  {
+    action 
+    {
+      turn_to_ball();
+    }
+  }
+
+  state wait_the_ball
+  {
+	action
+	{
+      wait_the_ball();
+	}	
+  }
+  
+  state pass_before_goal
+  {
+  	action
+  	{
+  		pass_before_goal();
+  	}
+  }
+
+  state game_over
+  {
+	action
+	{
+		motion.type=stand;
+	}
+  }
+  
+  
+}
+

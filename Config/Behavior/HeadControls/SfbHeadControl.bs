@@ -1,0 +1,35 @@
+requires "Tools"
+requires "HeadControl.bs"
+
+task scanForBall()
+  int startTime = input.time
+  for(; true; yield)
+    if(((input.time - startTime) % 1000) < 500)
+      HeadControl::lookAt(100.0, 0.0, 1.0)
+    else
+      HeadControl::lookAt(1500.0, 0.0, 1.0)
+
+task scanInFrontUpDown()
+  Tools::Trajectory traj
+  traj.addPoint(200.0, 500.0, 500)
+  traj.addPoint(1500.0, 500.0, 500)
+  traj.addPoint(1500.0, 0.0, 500)
+  traj.addPoint(200.0, 0.0, 500)
+  traj.addPoint(200.0, -500.0, 500)
+  traj.addPoint(1500.0, -500.0, 500)
+
+  for(; true; yield)
+    HeadControl::lookAtTrajectory(traj)
+    output.head.cameraControlMode = BH::CameraControlMode::lower
+
+task scanInFront()
+  Tools::Trajectory traj
+  traj.addPoint(750.0, 500.0, 0)
+  traj.addPoint(750.0, -500.0, 500)
+  traj.addPoint(200.0, -200.0, 500)
+  traj.addPoint(200.0, 200.0, 500)
+  traj.addPoint(750.0, 500.0, 500)
+
+  for(; true; yield)
+    HeadControl::lookAtTrajectory(traj)
+

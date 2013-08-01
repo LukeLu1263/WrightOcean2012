@@ -1,0 +1,78 @@
+/** The root option of the BH2011 soccer behavior */
+option start_soccer_tester
+{
+  initial state sit_down
+  {
+    decision
+    {
+      if(key.chest_button_pressed_and_released || game.disable_pre_initial)
+        goto stand_up;
+      else
+        stay;
+    }
+    action 
+    {
+      motion.type = special_action;
+      motion.special_action = play_dead;
+    }
+  }
+
+  state stand_up
+  {
+    decision
+    {
+      if(state_time > 1500)
+        goto start_soccer;
+      else
+        stay;
+    }
+    action 
+    {
+      motion.type = stand;
+    }
+  }
+
+  state start_soccer
+  {
+    decision
+    {
+      if((game.state == finished || (game.state == _initial && game.time_since_last_package_received < 500)) && key.chest_button_pressed_and_released)
+        goto fin;
+      else
+        stay;
+    }
+
+    action 
+    {
+      // control the body movement
+      body_control_tester();      
+      
+      // button_interface();
+      official_button_interface();
+      
+      // control head movement according to value of head.control_mode
+      head_control();
+      
+      // debugging
+      display_control();
+      
+    }
+  }  
+
+  state fin
+  {
+    decision
+    {
+      if(state_time > 2000)
+        goto sit_down;
+      else
+        stay;
+    }
+    action
+    {
+      motion.type = special_action;
+      motion.special_action = sit_down;
+      head.control_mode =  look_up;
+    }
+  }
+}

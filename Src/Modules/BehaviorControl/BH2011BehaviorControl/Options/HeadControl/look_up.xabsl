@@ -1,0 +1,19 @@
+/** lets the robot look up */
+option look_up
+{
+  initial state look_up
+  {
+    decision
+    {
+      stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.ccmode = lowerCamera;
+      head.pan = 0;
+      head.tilt = 30;
+      head.speed = 150;
+    }
+  }
+}

@@ -1,0 +1,12 @@
+ct training on
+vid raw module:RobotPerceptor:scanlines
+echo set representation:HeadAngleRequest pan = 1000; tilt = 1000; speed = 0;
+echo set representation:HeadAngleRequest unchanged
+echo ct reclassify
+echo xos head.ccmode upperCamera
+echo xos head.ccmode lowerCamera
+echo ct sendAndWrite
+echo ct save ctX
+#echo log start
+#echo log stop
+#echo log save ctX

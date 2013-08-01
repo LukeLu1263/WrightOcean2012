@@ -1,0 +1,31 @@
+requires "Roles/PenaltyStriker.bs"
+requires "Roles/PenaltyGoalie.bs"
+
+func playing()
+
+  #normal (secondary state)
+  if(false)
+    pass
+  #if(input.game.secondaryState == BH::SecondaryState::normal)
+  #  int role = input.robot.role
+
+  #  if(role == BH::Role::keeper)
+  #    Goalie::play()
+  #  else if(role == BH::Role::defender)
+  #    Defender::play()
+  #  else if(role == BH::Role::supporter)
+  #    Supporter::play()
+  #  else if(role == BH::Role::striker)
+  #    Striker::play()
+
+  #penalty shootout
+  else
+    output.leds.setState(BH::LEDs::rightEye, BH::LEDState::blinking)
+    if(input.robot.number == BH::Role::keeper)
+      PenaltyGoalie::play()
+    else if(input.robot.number == BH::Role::striker)
+      PenaltyStriker::play()
+    else
+      Motion::stand()
+      HeadControl::lookDown()
+

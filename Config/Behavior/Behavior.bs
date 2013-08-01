@@ -1,0 +1,84 @@
+requires "Debug"
+requires "HeadControls/HeadControl.bs"
+requires "Roles/PenaltyGoalie.bs"
+requires "Tools/Motion.bs"
+requires "Playing.bs"
+requires "Ready.bs"
+requires "PenalizedControl.bs"
+requires "GetUpControl.bs"
+requires "ButtonInterface.bs"
+
+#the set state
+func set()
+  #for now a function... could become a task if there's more to do
+  Motion::stand()
+  if(input.game.secondaryState == BH::SecondaryState::normal)
+    HeadControl::lookActive(1.0)
+  else
+    HeadControl::lookAt(300.0, 70.0, 150.0)
+
+#task which handles all "active" states (=> ready, set, playing + penalized- & getUpControl)
+task activeStates()
+  func needsGetUp() :bool
+    return input.fallDownState.state == BH::FallDownStateState::onGround and !PenaltyGoalie::reacted()
+
+  for(; true; yield)
+
+      #penalizedControl if penalized
+      if(input.robot.penalty != BH::Penalty::none)
+        for(; true; yield)
+          PenalizedControl::penalizedControl()
+          if(taskState(PenalizedControl::penalizedControl) == TaskState::done)
+            break
+
+      #getup if fallen
+      else if(needsGetUp())
+        for(; true; yield)
+          GetUpControl::getUpControl()
+          if(taskState(GetUpControl::getUpControl) == TaskState::done)
+            break
+
+      #ready, set, playing states
+      else if(input.game.state == BH::GameState::ready)
+        Ready::ready()
+      else if(input.game.state == BH::GameState::set)
+        set()
+      else if(input.game.state == BH::GameState::playing)
+        Playing::playing()
+      else
+        Debug::error("eeeelseeee in activeState")
+
+#this is the top level robocup task it handles the initial and finished
+#state and terminates if the chest button was released in the finished state
+task robocup()
+
+  #preinitial
+  for(; !input.buttons.chest and input.preInitialEnabled; yield)
+    Motion::setSpecialAction(BH::SpecialAction::playDead, false)
+
+  for(; true; yield)
+
+    #button interface
+    ButtonInterface::buttonInterface()
+
+    #handle initial and finished states
+    if(input.game.state == BH::GameState::initial)
+      Motion::stand()
+      HeadControl::lookStraight()
+    else if(input.game.state == BH::GameState::finished)
+      Motion::stand()
+      HeadControl::lookStraight()
+    else
+      #ready, set, playing
+      activeStates()
+
+#this function is called from the B-Human BScriptEngine
+func main()
+  #resets the output to some initial values
+  output.sound.sound = BH::Sounds::none
+  Motion::stand()
+  HeadControl::lookDown()
+
+  #runt he robocup behavior
+  robocup()
+

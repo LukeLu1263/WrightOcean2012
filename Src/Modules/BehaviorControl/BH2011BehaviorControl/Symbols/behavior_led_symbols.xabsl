@@ -1,0 +1,31 @@
+/** Symbols for the behavior led request. */
+namespace behavior_led_request_symbols("Behavior LED Request Symbols")
+{
+  /** The possible states of LEDs. */
+  enum behavior_led_request.state {
+    off,
+    on,
+    blinking,
+    fast_blinking,
+    half
+  };
+
+  enum behavior_led_request.color
+  {
+    default_color,
+    red,
+    green,
+    blue,
+    white,
+    magenta,
+    orange
+  };
+
+  enum behavior_led_request.color output behavior_led_request.leftEyeColor;
+  enum behavior_led_request.color output behavior_led_request.rightEyeColor;
+
+  enum behavior_led_request.state output behavior_led_request.leftEye;
+  enum behavior_led_request.state output behavior_led_request.rightEye;
+  enum behavior_led_request.state output behavior_led_request.leftEar;
+  enum behavior_led_request.state output behavior_led_request.rightEar;
+}

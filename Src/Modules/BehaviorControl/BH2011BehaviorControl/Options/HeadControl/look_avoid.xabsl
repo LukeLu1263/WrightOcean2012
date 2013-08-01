@@ -1,0 +1,56 @@
+option look_avoid
+{
+  state up
+  {
+    decision
+    {
+      if (state_time > 1000)
+        goto look_at_ball;
+      else
+        stay;
+    }
+    action
+    {
+      head.use_active_vision = true;
+      head.active_vision_ball_factor = 1.0;
+      head.speed = 100;
+    }
+  }
+  state look_at_ball
+  {
+    decision
+    {
+      if (state_time > 1000)
+	  {
+        if(obstacle.distance_to_closest < 500)
+	      goto down;
+	    else
+	      goto up;
+      }
+	  else
+        stay;
+    }
+    action
+    {
+    	look_at_ball();
+    }
+  }
+
+  initial state down {
+    decision
+    {
+      if (state_time > 1000)
+        goto up;
+      else
+        stay;
+    }
+    action
+    {
+      head.use_active_vision = false;
+      head.mode = pan_tilt;
+      head.pan = 0;
+      head.tilt = -20;
+      head.speed = 150;
+    }
+  }
+}

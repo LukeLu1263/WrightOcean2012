@@ -1,0 +1,91 @@
+requires "BH"
+
+#implements the official button interface
+task buttonInterface()
+
+  for(; true;)
+    int startTime = input.time
+
+    if(input.game.state == BH::GameState::initial)
+
+      #chest
+      if(input.buttons.chest)
+        #penalized + playing
+        for(; input.time - startTime < 500; yield)
+          output.game.state = BH::GameState::playing
+          output.robot.penalty = BH::Penalty::manual
+          output.sound.sound = BH::Sounds::penalized
+        continue
+
+      #left foot
+      if(input.buttons.leftFoot)
+        #set red
+        if(input.team.color == BH::Team::blue)
+          for(; input.time - startTime < 1500; yield)
+            output.team.color = BH::Team::red
+            if(input.game.secondaryState == BH::SecondaryState::penaltyshoot)
+              output.sound.sound = BH::Sounds::penaltyStriker
+            else
+              output.sound.sound = BH::Sounds::red
+          continue
+        #set blue
+        else if(input.team.color == BH::Team::red)
+          for(; input.time - startTime < 1500; yield)
+            output.team.color = BH::Team::blue
+            if(input.game.secondaryState == BH::SecondaryState::penaltyshoot)
+              output.sound.sound = BH::Sounds::penaltyKeeper
+            else
+              output.sound.sound = BH::Sounds::blue
+          continue
+
+      #right foot
+      if(input.buttons.rightFoot)
+        if(input.game.secondaryState == BH::SecondaryState::normal)
+          #set own kickoff
+          if(input.game.kickOffTeam != input.team.color)
+            for(; input.time - startTime < 1500; yield)
+              output.game.kickOffTeam = input.team.color
+              output.game.secondaryState = BH::SecondaryState::normal
+              output.sound.sound = BH::Sounds::ownKickoff
+            continue
+          #set penalty shootout
+          else
+            for(; input.time - startTime < 1500; yield)
+              output.game.secondaryState = BH::SecondaryState::penaltyshoot
+              output.sound.sound = BH::Sounds::penaltyShootout
+            continue
+
+        else #secondaryState == penaltyshoot
+          #set opp kickoff
+          for(; input.time - startTime < 1500; yield)
+            if(input.team.color == BH::Team::blue)
+              output.game.kickOffTeam = BH::Team::red
+            else
+              output.game.kickOffTeam = BH::Team::blue
+            output.game.secondaryState = BH::SecondaryState::normal
+            output.sound.sound = BH::Sounds::opponentKickoff
+          continue
+
+    else if(input.game.state == BH::GameState::finished)
+      pass
+    else #no initial
+      #chest
+      if(input.buttons.chest)
+        #set penalized
+        if(input.robot.penalty == BH::Penalty::none)
+          for(; input.time - startTime < 500; yield)
+            output.robot.penalty = BH::Penalty::manual
+            output.sound.sound = BH::Sounds::penalized
+          continue
+
+        #set unpenalized
+        if(input.robot.penalty != BH::Penalty::none)
+          for(; input.time - startTime < 500; yield)
+            output.game.state = BH::GameState::playing
+            output.robot.penalty = BH::Penalty::none
+            output.sound.sound = BH::Sounds::notPenalized
+          continue
+
+
+    yield
+

@@ -1,0 +1,10 @@
+option display_control
+{
+  initial state display
+  {
+    action 
+    {
+      display_obstacle();
+    }
+  }
+}

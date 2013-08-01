@@ -1,0 +1,116 @@
+/*
+Title: WrightOcean Team 2012
+Platform: Nao
+Software-Environment: B-Human framework
+
+in random order, symbols first
+*/
+      
+include "../CommonSymbols/math_symbols.xabsl";
+include "../CommonSymbols/motion_symbols.xabsl";
+include "../CommonSymbols/sound_symbols.xabsl";
+include "../CommonSymbols/key_symbols.xabsl";
+
+include "Symbols/ball_symbols.xabsl";
+include "Symbols/bike_symbols.xabsl";
+include "Symbols/fall_down_symbols.xabsl";
+include "Symbols/field_symbols.xabsl";
+include "Symbols/game_symbols.xabsl";
+include "Symbols/goal_symbols.xabsl";
+include "Symbols/head_symbols.xabsl";
+include "Symbols/head_control_symbols.xabsl";
+include "Symbols/behavior_led_symbols.xabsl";
+include "Symbols/locator_symbols.xabsl";
+include "Symbols/obstacle_symbols.xabsl";
+include "Symbols/team_symbols.xabsl";
+include "Symbols/role_symbols.xabsl";
+include "Symbols/soccer_symbols.xabsl";
+
+/* Debugging */
+include "Options/Debugging/official_button_interface.xabsl";
+include "Options/Debugging/display_control.xabsl";
+include "Options/Debugging/display_obstacle.xabsl";
+
+/* HeadControl */
+include "Options/HeadControl/head_control.xabsl";
+include "Options/HeadControl/look_around.xabsl";
+include "Options/HeadControl/look_at_ball.xabsl";
+include "Options/HeadControl/look_up.xabsl";
+include "Options/HeadControl/look_down.xabsl";
+include "Options/HeadControl/look_up_and_down.xabsl";
+include "Options/HeadControl/look_down_left_and_right.xabsl";
+include "Options/HeadControl/look_keeper.xabsl";
+include "Options/HeadControl/look_left.xabsl";
+include "Options/HeadControl/look_right.xabsl";
+include "Options/HeadControl/look_left_and_right.xabsl";
+include "Options/HeadControl/look_scan_area_in_front.xabsl";
+include "Options/HeadControl/look_striker.xabsl";
+include "Options/HeadControl/look_localization.xabsl";
+include "Options/HeadControl/scan_for_ball.xabsl";
+include "Options/HeadControl/search_ball.xabsl";
+include "Options/HeadControl/look_active.xabsl";
+include "Options/HeadControl/look_active_with_ball.xabsl";
+include "Options/HeadControl/look_active_without_ball.xabsl";
+include "Options/HeadControl/look_avoid.xabsl";
+include "Options/HeadControl/look_avoid_total.xabsl";
+include "Options/HeadControl/look_avoid_and_localize.xabsl";
+
+/* Skills */
+include "Options/Skills/special_action.xabsl";
+include "Options/Skills/stand_up.xabsl";
+include "Options/Skills/walk_to_point.xabsl";
+include "Options/Skills/walk_omnidirectional.xabsl";
+include "Options/Skills/walk_kick.xabsl";
+include "Options/Skills/fine_tune_pose.xabsl";
+include "Options/Skills/striker_avoid.xabsl";
+include "Options/Skills/striker_turn_around.xabsl";
+include "Options/Skills/walk_to_pose.xabsl";
+
+/* Soccer */
+include "Options/Soccer/body_control.xabsl";
+include "Options/Soccer/start_soccer.xabsl";
+include "Options/Soccer/ready_behavior.xabsl";
+include "Options/Soccer/kickoff_behavior.xabsl";
+
+/* Striker */
+include "Options/Soccer/Striker/playing_striker.xabsl";
+include "Options/Soccer/Striker/pass_before_goal.xabsl";
+include "Options/Soccer/Striker/kick.xabsl";
+include "Options/Soccer/Striker/search.xabsl";
+include "Options/Soccer/Striker/side_left_obs.xabsl";
+include "Options/Soccer/Striker/side_right_obs.xabsl";
+include "Options/Soccer/Striker/turn_to_ball.xabsl";
+include "Options/Soccer/Striker/wait_the_ball.xabsl";
+include "Options/Soccer/Striker/playing_striker_game.xabsl";
+
+/* Keeper*/
+include "Options/Soccer/Keeper/playing_keeper.xabsl";
+include "Options/Soccer/Keeper/keeper_clear_ball.xabsl";
+include "Options/Soccer/Keeper/keeper_search_for_ball.xabsl";
+include "Options/Soccer/Keeper/keeper_back_to_own_goal.xabsl";
+include "Options/Soccer/Keeper/reach_to_keeper_desired_pose.xabsl";
+
+/* Supporter*/
+include "Options/Soccer/Supporter/go_to_ball_and_avoid_obstacle_supporter.xabsl";
+include "Options/Soccer/Supporter/normal_playing_supporter.xabsl";
+include "Options/Soccer/Supporter/playing_supporter.xabsl";
+include "Options/Soccer/Supporter/position_supporter_near_ball.xabsl";
+include "Options/Soccer/Supporter/position_supporter_near_opponent_goal.xabsl";
+include "Options/Soccer/Supporter/support_kick.xabsl";
+include "Options/Soccer/Supporter/turn_for_ball.xabsl";
+
+/* Defender*/
+include "Options/Soccer/Defender/ball_near_own_goal.xabsl";
+include "Options/Soccer/Defender/ball_on_opponent_area.xabsl";
+include "Options/Soccer/Defender/go_to_ball_and_avoid_obstacle_defender.xabsl";
+include "Options/Soccer/Defender/near_to_ball.xabsl";
+include "Options/Soccer/Defender/playing_defender.xabsl";
+
+/* Tester */
+//include "Options/Tester/start_tester.xabsl";
+//include "Options/Tester/body_control_tester.xabsl";
+//include "Options/Tester/playing_tester.xabsl";
+//include "Options/Tester/odometry_tester.xabsl";
+
+/* WrightOcean Soccer Agent */
+agent soccer("Soccer", start_soccer);

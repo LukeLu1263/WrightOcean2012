@@ -1,0 +1,36 @@
+option fine_tune_pose
+{    
+  float @x;
+  float @y;
+  float @angle;
+
+  initial state shift{
+    decision{
+      //stay;
+      //goto finish;
+      if((locator.distance_to(x = @x, y = @y) < 100 && abs(value = @angle-locator.pose.angle) < 5) && state_time > 6000)
+        goto finish;
+      else
+        stay;
+    }
+    action{
+      head.control_mode = look_localization;
+      motion.type = walk;
+      motion.walk_target.x = (abs(value=@angle-locator.pose.angle)>10)?0:locator.field_to_relative.x(x = @x, y = @y);
+      motion.walk_target.y = (abs(value=@angle-locator.pose.angle)>10)?0:locator.field_to_relative.y(x = @x, y = @y);
+      motion.walk_target.rot = @angle-locator.pose.angle;
+      motion.walk_speed=80;
+    }
+  }
+
+  target state finish{
+    decision{
+      stay;
+    }
+    action{
+      motion.type = stand;
+      head.control_mode = look_localization;
+    }
+  }
+
+}

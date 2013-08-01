@@ -1,0 +1,215 @@
+/** The base option for the head control behavior */
+option head_control
+{
+  common decision
+  {
+    if(head.control_mode == none)
+      goto none;
+    else if(head.control_mode == look_at_ball)
+      goto look_at_ball;
+    else if(head.control_mode == look_down)
+      goto look_down;
+    else if(head.control_mode == look_up)
+      goto look_up;
+    else if(head.control_mode == look_up_and_down)
+      goto look_up_and_down;
+    else if(head.control_mode == look_left)
+      goto look_left;
+    else if(head.control_mode == look_right)
+      goto look_right;
+    else if(head.control_mode == look_left_and_right)
+      goto look_left_and_right;
+    else if(head.control_mode == look_down_left_and_right)
+      goto look_down_left_and_right;
+    else if(head.control_mode == look_keeper)
+      goto look_keeper;
+    else if(head.control_mode ==  look_scan_area_in_front)
+      goto look_scan_area_in_front;
+    else if(head.control_mode ==  look_localization)
+      goto look_localization;
+    else if(head.control_mode == scan_for_ball)
+      goto scan_for_ball;
+    else if(head.control_mode == look_around)
+      goto   look_around;
+    else if(head.control_mode == look_striker)
+      goto  look_striker;
+    else if(head.control_mode == search_ball)
+      goto  search_ball;
+    else if(head.control_mode == look_active)
+      goto look_active;
+    else if(head.control_mode == look_active_with_ball)
+      goto look_active_with_ball;
+    else if(head.control_mode == look_active_without_ball)
+      goto look_active_without_ball;
+    else if(head.control_mode == look_avoid)
+      goto look_avoid;
+    /*else if(head.control_mode == look_avoid_and_localize)
+      goto look_avoid_and_localize;
+    else if(head.control_mode == look_avoid_total)
+      goto look_avoid_total;*/
+  }
+
+  initial state none
+  {
+    action
+    {
+    	head.speed = 0;
+    }
+  }
+
+  state look_at_ball
+  {
+    action
+    {
+      look_at_ball();
+    }
+  }
+  
+  state look_down
+  {
+    action
+    {
+      look_down();
+    }
+  }
+  
+  state look_up
+  {
+    action
+    {
+      look_up();
+    }
+  }
+
+  state look_up_and_down
+  {
+    action
+    {
+      look_up_and_down();
+    }
+  }
+   state look_left
+  {
+    action
+    {
+      look_left();
+    }
+  }
+  state look_right
+  {
+    action
+    {
+      look_right();
+    }
+  }
+   state  look_left_and_right
+  {
+    action
+    {
+      look_left_and_right();
+    }
+  }
+  state  look_down_left_and_right
+  {
+    action
+    {
+      look_down_left_and_right();
+    }
+  }
+  state  look_keeper
+  {
+    action
+    {
+      look_keeper();
+    }
+  }
+
+  state  look_scan_area_in_front
+  {
+    action
+    {
+       look_scan_area_in_front();
+    }
+  }
+   state look_localization
+  {
+    action
+    {
+       look_localization();
+    }
+  }
+   state scan_for_ball
+  {
+    action
+    {
+      scan_for_ball();
+    }
+  }
+state  look_around
+  {
+    action
+    {
+       look_around();
+    }
+  }
+
+state  look_striker
+  {
+    action
+    {
+       look_striker();
+    }
+  }
+
+state search_ball
+  {
+    action
+    {
+      search_ball();
+    }
+  }
+  
+  state  look_active
+  {
+    action
+    {
+     look_active();
+    }
+  }
+  state look_active_with_ball
+  {
+    action
+    {
+      look_active_with_ball();
+    }
+  }
+  state look_active_without_ball
+  {
+    action
+    {
+      look_active_without_ball();
+    }
+  }
+  state look_avoid
+  {
+    action
+    {
+      look_avoid();
+    }
+  }
+  state look_avoid_and_localize
+  {
+  	action
+  	{
+  	  look_avoid_and_localize();
+  	}
+  }
+  
+  state look_avoid_total
+  {
+  	action
+  	{
+      look_avoid_total();
+    }
+  }
+}

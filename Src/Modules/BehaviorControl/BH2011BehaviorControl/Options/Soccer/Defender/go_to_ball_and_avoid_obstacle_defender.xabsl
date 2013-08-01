@@ -1,0 +1,159 @@
+option go_to_ball_and_avoid_obstacle_defender
+{
+  initial state turn_to_ball
+  {
+    decision
+    {
+      if(abs( value = ball.angle ) < 5)
+        goto decide_way;
+      else 
+        stay;
+    }
+    action
+    {
+      motion.type = walk;
+      motion.walk_target.x = 0;
+      motion.walk_target.y = 0;
+      motion.walk_target.rot = ball.angle;
+      motion.walk_speed = 50;
+      head.control_mode = look_up_and_down;
+    }
+  }
+  
+  state decide_way
+  {
+    decision
+    {
+      if (abs(value = (locator.pose.y - ball.on_field.y) / (locator.pose.x-ball.on_field.x)*(-1900 - ball.on_field.x)+ball.on_field.y) > 1100 || ball.on_field.x > -2400)
+        goto walk_to_ball_and_avoid;
+      else if (locator.pose.x < -2400 && ball.on_field.x > -2400)
+        goto go_forward;
+      else goto avoid_penalty;
+    }
+	action
+	{}  
+  }
+  
+  state go_forward
+  {
+      decision
+      {
+        if (locator.pose.x > -2300 )
+          goto decide_way;
+        else
+          stay;
+      }
+      action
+      {
+        motion.type = walk;
+        motion.walk_speed.x = 80;
+        motion.walk_speed.y = -20;
+        motion.walk_speed.rot = 0;
+        head.control_mode = look_up_and_down;
+      }
+    
+ }
+  
+  state walk_to_ball_and_avoid
+  {
+  	decision
+  	{
+  	  //obstacle in left,and move right
+  	  if(obstacle.distance_to_closest_center_left<500&&(ball.distance>obstacle.distance_to_closest_center_left))
+        goto side_right_obs;
+      //obstacle in right,and move left
+      else if(obstacle.distance_to_closest_center_right<500&&(ball.distance>obstacle.distance_to_closest_center_right))
+        goto side_left_obs;
+     // else if ((ball.position.field.y > 1980 || ball.position.field.y < -1980) && ball.distance <500 )
+	//	    	goto wait_for_ball;
+	  else
+      	  stay;
+    }
+    action
+    {
+      motion.type = walk;
+      motion.walk_speed.x = (ball.x < 500)? 30 : ball.x -150; 
+      motion.walk_speed.y = ball.y;
+      motion.walk_speed.rot = ball.angle; 
+      head.control_mode = state_time%2000>1000?look_up_and_down:look_at_ball;
+    }
+  }
+  
+  state avoid_penalty
+  {
+    decision
+    {
+      if(abs(value = (locator.pose.y - ball.on_field.y) / (locator.pose.x-ball.on_field.x)*(-1900 - ball.on_field.x)+ball.on_field.y) > 1100)
+        goto walk_to_ball_and_avoid;
+      else
+        stay;
+    }
+    action
+    {
+      motion.type = walk;
+      motion.walk_target.x = locator.field_to_relative.x (x=-1900,y=ball.on_field.y);
+      motion.walk_target.y = locator.field_to_relative.y (x=-1900,y=ball.on_field.y);
+      motion.walk_speed = 80;
+      motion.walk_target.rot = 0;
+      head.control_mode = look_at_ball;
+    }
+  }
+
+  /*state wait_for_ball
+	{
+		decision
+		{
+			if (state_time > 1500)
+				goto turn_to_ball;
+			else
+				stay;
+		}
+		action	  
+		{
+			motion.type = walk;
+            motion.walk_target.x = 0;
+            motion.walk_target.y = ball.y;
+            motion.walk_target.rot =0;
+            motion.walk_speed = 60;
+            head.control_mode=look_at_ball; 
+		}
+	}*/
+  
+  state side_right_obs
+  {
+      decision
+	  {
+	     if (obstacle.distance_to_closest_center_right > 500)
+		    goto turn_to_ball;
+		 else
+		    stay;
+	  }
+  	  action
+  	  { 
+  	       motion.type = walk;
+           motion.walk_speed.x=0;
+           motion.walk_speed.y = -30; 
+           motion.walk_speed.rot = 0;
+           head.control_mode =  look_active_with_ball;  
+  	  }
+  }
+  
+  state side_left_obs
+  {
+      decision
+	  {
+	     if (obstacle.distance_to_closest_center_right > 500)
+		    goto turn_to_ball;
+		 else
+		    stay;
+	  }
+  	  action
+  	  {
+  	  	   motion.type = walk;
+           motion.walk_speed.x=0;
+           motion.walk_speed.y = 30; 
+           motion.walk_speed.rot = 0;
+           head.control_mode =  look_active_with_ball;  
+  	  }
+  } 
+}

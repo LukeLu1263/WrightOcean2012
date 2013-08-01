@@ -1,0 +1,293 @@
+option ready_behavior
+{
+  initial state decide_pose
+  {
+    decision {
+      if(game.kickoff_team == game.team_color) 
+      {
+      	//keeper
+        if(game.pn == 1)
+          goto pose1;
+        //offensiveSupporter
+        else if(game.pn == 2)
+          goto pose2;
+        //striker
+        else if(game.pn == 3)
+          goto pose3;
+        //defensiveSupporter
+        else
+          goto pose4;
+      }
+      else 
+      {
+        if(game.pn == 1)
+          goto pose5;
+        else if(game.pn == 2)
+          goto pose6;
+        else if(game.pn == 3)
+          goto pose7;
+        else
+          goto pose8;
+      }
+    }
+    action
+    {
+    }
+  }
+
+  state pose1
+  {
+    decision
+    {
+      if(action_done)
+        goto fine_tune1;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      walk_to_pose(x = -2700, y = 0, angle = 0);
+    }
+  }
+
+  state fine_tune1
+  {
+    decision
+    {
+      if(locator.distance_to(x = -2700, y = 0) > 800)
+        goto pose1;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      fine_tune_pose(x = -2900, y = 0, angle = 0);
+    }
+  }
+  
+  state pose2
+  {
+    decision
+    {
+      if(action_done)
+        goto fine_tune2;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      walk_to_pose(x = -400, y = 1100, angle = 0);
+    }
+  }
+
+  state fine_tune2
+  {
+    decision
+    {
+      if(locator.distance_to(x = -400, y = 1100) > 800)
+        goto pose2;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      fine_tune_pose(x = -400, y = 1100, angle = 0);
+    }
+  }
+
+  state pose3
+  {
+    decision
+    {
+      if(action_done)
+        goto fine_tune3;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      walk_to_pose(x = -400, y = 0, angle = 0);
+    }
+  }
+
+  state fine_tune3
+  {
+    decision
+    {
+      if(locator.distance_to(x = -400, y = 0) > 800)
+        goto pose3;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      fine_tune_pose(x = -400, y = 0, angle = 0);
+    }
+  }
+
+  state pose4
+  {
+    decision
+    {
+      if(action_done)
+        goto fine_tune4;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      walk_to_pose(x = -400, y = -1100, angle = 0);
+    }
+  }
+
+  state fine_tune4
+  {
+    decision
+    {
+      if(locator.distance_to(x = -400, y = -1100) > 800)
+        goto pose4;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      fine_tune_pose(x = -400, y = -1100, angle = 0);
+    }
+  }
+
+  state pose5
+  {
+    decision
+    {
+      if(action_done)
+        goto fine_tune5;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      walk_to_pose(x = -2700, y = 0, angle = 0);
+    }
+  }
+
+  state fine_tune5
+  {
+    decision
+    {
+      if(locator.distance_to(x = -2700, y = 0) > 800)
+        goto pose5;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      fine_tune_pose(x = -2900, y = 0, angle = 0);
+    }
+  }
+  
+  state pose6
+  {
+    decision
+    {
+      if(action_done)
+        goto fine_tune6;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      walk_to_pose(x = -1600, y = 1100, angle = 0);
+    }
+  }
+
+  state fine_tune6
+  {
+    decision
+    {
+      if(locator.distance_to(x = -1600, y = 1100) > 800)
+        goto pose6;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      fine_tune_pose(x = -1600, y = 1100, angle = 0);
+    }
+  }
+
+  state pose7
+  {
+    decision
+    {
+      if(action_done)
+        goto fine_tune7;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      walk_to_pose(x = -1600, y = 0, angle = 0);
+    }
+  }
+
+  state fine_tune7
+  {
+    decision
+    {
+      if(locator.distance_to(x = -1600, y = 0) > 800)
+        goto pose7;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      fine_tune_pose(x = -1600, y = 0, angle = 0);
+    }
+  }
+
+  state pose8
+  {
+    decision
+    {
+      if(action_done)
+        goto fine_tune8;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      walk_to_pose(x = -1600, y = -1100, angle = 0);
+    }
+  }
+
+  state fine_tune8
+  {
+    decision
+    {
+      if(locator.distance_to(x = -1600, y = -1100) > 800)
+        goto pose8;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = look_localization;
+      fine_tune_pose(x = -1600, y = -1100, angle = 0);
+    }
+  }
+}

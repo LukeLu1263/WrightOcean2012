@@ -1,0 +1,11 @@
+motion_id = leftArmUp
+"Left arm up and down
+label start
+
+"HY HP  LSR  LEY  LER  RSR  REY  RER  LHYP  LHR   LHP LKP  LAP  LAR  RHYP  RHR  RHP  RKP  RAP RAR Int Dur
+
+* * * 75.000000 * * * * * * * * * * * * * * * * * * 1 500
+* * * * * * * * * * * * * * * * * * * * * * 0 400
+* * * 5.0 * * * * * * * * * * * * * * * * * * 1 500
+
+transition allMotions extern start       

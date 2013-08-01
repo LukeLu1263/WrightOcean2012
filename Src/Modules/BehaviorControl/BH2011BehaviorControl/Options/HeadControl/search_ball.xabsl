@@ -1,0 +1,106 @@
+option search_ball
+{
+
+  initial state look_right_around
+  {
+    decision
+    {
+      if (!head.is_moving)
+        goto look_left_around;
+      else
+        stay;
+    }
+    action
+    {
+      head.pan = -30;
+      head.tilt = -80;
+      head.speed = 50;
+    }
+  }
+
+  state look_left_around
+  {
+    decision
+    {
+      if (!head.is_moving)
+        goto look_up;
+      else
+        stay;
+    }
+    action
+    {
+      head.pan = 30;
+      head.tilt = -80;
+      head.speed = 50;
+    }
+  }
+
+ state look_up
+  {
+    decision
+    {
+      if (!head.is_moving)
+        goto look_right_up_around;
+      else
+        stay;
+    }
+    action
+    {
+      head.pan = 30;
+      head.tilt = 0;
+      head.speed = 50;
+    }
+  }
+
+  state look_right_up_around
+  {
+    decision
+    {
+      if (!head.is_moving)
+        goto look_left_up_around;
+      else
+        stay;
+    }
+    action
+    {
+      head.pan = -30;
+      head.tilt = 10;
+      head.speed = 50;
+    }
+  }
+
+ state look_left_up_around
+  {
+    decision
+    {
+      if (!head.is_moving)
+        goto look_down;
+      else
+        stay;
+    }
+    action
+    {
+      head.pan = 30;
+      head.tilt = 10;
+      head.speed = 50;
+    }
+  }
+
+  state look_down
+  {
+    decision
+    {
+      if (!head.is_moving)
+        goto look_right_around;
+      else
+        stay;
+    }
+    action
+    {
+      head.pan = -30;
+      head.tilt = -80;
+      head.speed = 50;
+    }
+  }
+
+}

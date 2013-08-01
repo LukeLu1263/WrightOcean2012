@@ -1,0 +1,75 @@
+option normal_playing_supporter
+{
+	common decision
+	{
+		if(ball.time_since_last_seen > 5000)
+			goto search_for_ball;
+		else if(ball.position.field.x > 2400 && (ball.position.field.y > 1100 || ball.position.field.y < -1100))
+			goto position_near_opponent_goal;
+	}
+
+	initial state near_ball
+	{
+		decision
+		{
+			else if(ball.distance > 1000)
+				goto get_to_far_ball;
+			else
+				stay;
+		}
+		action
+		{
+			position_supporter_near_ball();
+		}
+	}
+
+	state search_for_ball
+	{
+		decision
+		{
+			else if(ball.was_seen)
+				goto near_ball;
+			else
+				stay;
+		}
+		action
+		{
+			motion.type = walk;
+			motion.walk_target.x = 0;
+			motion.walk_target.y = 0;
+			motion.walk_target.rot = ball.y < 0 ? -180 : 180;
+			motion.walk_speed = 50;
+			head.control_mode = look_up_and_down;
+		}
+	}
+
+	state get_to_far_ball
+	{
+		decision
+		{
+			else if(ball.distance < 800)
+				goto near_ball;
+			else
+				stay;
+		}
+		action
+		{
+			go_to_ball_and_avoid_obstacle();
+		}
+	}
+
+	state position_near_opponent_goal
+	{
+		decision
+		{
+			else if(ball.position.field.x < 2400)
+				goto near_ball;
+			else
+				stay;
+		}
+		action
+		{
+			position_supporter_near_opponent_goal();
+		}
+	}
+}

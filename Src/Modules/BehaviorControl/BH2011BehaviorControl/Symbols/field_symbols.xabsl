@@ -1,0 +1,63 @@
+/** Symbols for accessing the field dimensions */
+namespace field_symbols("Field Dimension Symbols") {
+  /** The radius of the ball */
+  float input field.ball_radius [mm];
+
+  /** The x position of the own goal */
+  float input field.own_goal.x [mm];
+
+  /** The x position of the own groundline */
+  float input field.own_ground_line.x [mm];
+
+  /** The x position of the opponent groundline */
+  float input field.opponent_ground_line.x [mm];
+
+  /** The y position of the left sideline */
+  float input field.left_sideline.y [mm];
+
+  /** The y position of the right sideline */
+  float input field.right_sideline.y [mm];
+
+  /** The y position of the left field border */
+  float input field.left_field_border.y [mm];
+
+  /** The y position of the right field border */
+  float input field.right_field_border.y [mm];
+
+  /** The radius of the center circe */
+  float input field.center_circle_radius [mm];
+
+  /** The x position of the own penalty area */
+  float input field.own_penalty_area.x [mm];
+  
+  /** The x position of the own penalty mark */
+  float input field.own_penalty_mark.x [mm];
+
+  /** The x position of the opponent penalty area */
+  float input field.opponent_penalty_area.x [mm];
+
+  /** The x position of the opponent penalty mark */
+  float input field.opponent_penalty_mark.x [mm];
+
+  /** The y position of the left penalty area */
+  float input field.left_penalty_area.y [mm];
+
+  /** The y position of the right penalty area */
+  float input field.right_penalty_area.y [mm];
+  
+  /** The x position of the opponent throw in point */
+  float input field.opponent_throw_in_point.x [mm];
+  
+  /** The x position of the own throw in point */
+  float input field.own_throw_in_point.x [mm];
+  
+  /** The left y position goal post */
+  float input field.left_goal.y;
+  
+  /** The right y position goal post */
+  float input field.right_goal.y;
+
+  float const field.throw_in_line.y = 1600;
+  float const field.throw_in_line.x = 2000;
+  float const field.throw_in_penalty.x = 1000;
+}

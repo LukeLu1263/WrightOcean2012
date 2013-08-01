@@ -1,0 +1,23 @@
+option display_obstacle
+{
+  common decision
+  {
+    if(obstacle.distance_to_closest_center > 500)
+      goto nothing;
+    else if(obstacle.distance_to_closest_center <= 500)
+      goto blink;
+  }
+
+  initial state nothing
+  {
+    action {}
+  }
+
+  state blink
+  {
+    action
+    {
+      behavior_led_request.rightEar = behavior_led_request.state.blinking;
+    }
+  }
+}

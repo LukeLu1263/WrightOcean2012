@@ -1,0 +1,111 @@
+/* 测试用例 */
+option playing_tester
+{
+  initial state start
+  {
+    decision
+    {
+    	if(state_time > 2000)
+    		goto walk_to_ball;
+    	else if(ball.time_since_last_seen > 7000)
+        	goto search_for_ball;
+    	else
+	  		stay;
+    }
+    action
+    {
+    	motion.type = stand;
+    }
+  }
+
+  state turn_to_ball
+  {
+  	decision
+  	{
+  		if(abs(value = ball.angle) < 5)
+  			goto walk_to_ball;
+    	else if(ball.time_since_last_seen > 7000)
+        	goto search_for_ball;
+  		else
+  			stay;
+  	}
+  	action
+  	{
+		head.control_mode = look_at_ball;
+    	motion.type = walk;
+    	motion.walk_target.x = 0;
+    	motion.walk_target.y = 0;
+    	motion.walk_target.rot = ball.angle;
+    	motion.walk_speed = 70;
+  	}
+  }
+  
+	state walk_to_ball
+	{
+		decision
+		{
+			if(ball.distance < 300)
+				goto quick_kick_forward;
+    		else if(ball.time_since_last_seen > 7000)
+        		goto search_for_ball;
+			else
+				stay;
+		}
+		action
+		{
+			head.control_mode = look_at_ball;
+    		motion.type = walk;
+    		motion.walk_target.x = ball.x;
+    		motion.walk_target.y = 0;
+    		motion.walk_target.rot = ball.angle;
+    		motion.walk_speed = 100;
+		}
+	}
+
+	state quick_kick_forward
+	{
+	    decision
+		{
+			if(ball.distance > 300)
+				goto turn_to_ball;
+    		else if(ball.time_since_last_seen > 7000)
+        		goto search_for_ball;
+			else
+				stay;
+		}
+		action
+		{
+			/* 向前踢.*/
+			walk_kick(id = ball.y > 0 ? left : right);
+			
+			/* 使用左脚向右侧踢*/
+			//walk_kick(id = sidewards_left);
+			
+			/* 使用右脚向左侧踢*/
+			//walk_kick(id = sidewards_right);
+		}
+	}
+
+  	state search_for_ball
+  	{
+   	 	decision
+    	{
+     		if(ball.was_seen)
+        		goto turn_to_ball;
+      		else
+        		stay;
+    	}
+   	 	action
+    	{
+      		motion.type = walk;
+      		motion.walk_target.x = 0;
+      		motion.walk_target.y = 0;
+      		motion.walk_target.rot = ball.y < 0 ? -180 : 180;
+      		motion.walk_speed = 50;
+      		head.control_mode = look_up_and_down;
+    	}
+    }
+
+
+
+}

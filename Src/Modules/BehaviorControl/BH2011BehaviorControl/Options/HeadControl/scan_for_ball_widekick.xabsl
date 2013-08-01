@@ -1,0 +1,51 @@
+option scan_for_ball_widekick
+{
+  initial state look_down {
+    decision {
+      if(ball.was_seen)
+        goto look_at_ball;
+      else if(state_time > 500)
+        goto look_up;
+      else
+        stay;
+    }
+    action {
+      head.mode = pan_tilt;
+      head.pan = head.look_angle;
+      head.tilt = -15;
+      head.speed = 150;
+    }
+  }
+
+  state look_up {
+    decision {
+      if(ball.was_seen)
+        goto look_at_ball;
+      else
+        stay;
+    }
+    action {
+      head.mode = pan_tilt;
+      head.pan = head.look_angle;
+      head.tilt = 27;
+      head.speed = 80;
+    }
+  }
+
+  state look_at_ball {
+    decision {
+      if(ball.time_since_disappeared > 200)
+        goto look_up;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = target_on_ground;
+      head.target.x = ball.x;
+      head.target.y = ball.y;
+      head.target.z = 35;
+      head.speed = 100;
+    }
+  }
+}

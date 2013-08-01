@@ -1,0 +1,55 @@
+/** Go to the last seen ball position */
+option look_around
+{
+  initial state look_up
+  {
+    decision
+    {
+      if(!head.is_moving)
+        goto look_right_up_around;
+      else
+        stay;
+    }
+    action
+    {
+      head.pan = 0;
+      head.tilt = 20;
+      head.speed = 50;
+    }
+  }
+
+  state look_right_up_around
+  {
+    decision
+    {
+      if(!head.is_moving)
+        goto look_left_up_around;
+      else
+        stay;
+    }
+    action
+    {
+      head.pan = -25;
+      head.tilt = 20;
+      head.speed = 50;
+    }
+  }
+
+ state look_left_up_around
+  {
+    decision
+    {
+      if(!head.is_moving)
+        goto look_right_up_around;
+      else
+        stay;
+    }
+    action
+    {
+      head.pan = 25;
+      head.tilt = 20;
+      head.speed = 50;
+    }
+  }
+
+}

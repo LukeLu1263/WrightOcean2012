@@ -1,0 +1,214 @@
+option kick
+{
+ initial state decide_kick
+ {
+   decision
+   {
+/*    if(opponent_goal.free_part.angle_to_center  < -5)
+   {
+      goto turn_around_positive;
+     }
+    else if(opponent_goal.free_part.angle_to_center  > 5)
+    {
+       goto turn_around_negative;
+     }*/
+     if(abs( value = opponent_goal.free_part.angle_to_center ) > 5)
+     	goto align_to_goal;
+     else if(!between( value = ball.x, min = 100, max = 170 ))
+    	 goto check_ball_x;
+     else if((obstacle.distance_to_closest_center<=300||(obstacle.vision.leftRatio < 0.6 || obstacle.vision.rightRatio < 0.6))&&ball.position.field.y>0)
+   		 goto side_kick_right;
+     else if((obstacle.distance_to_closest_center<=300||(obstacle.vision.leftRatio < 0.6 || obstacle.vision.rightRatio < 0.6))&&ball.position.field.y<0)
+    	 goto side_kick_left;
+       else if(ball.y > -30&&ball.y<0)
+      {
+         goto look_before_kick_right;
+      }
+      else if(ball.y<30&&ball.y>0)
+      {
+         goto look_before_kick_left;
+      }
+
+ else
+ {
+ stay;
+ }
+ }
+ action
+ {  
+  motion.type = walk;
+  motion.walk_speed.x = 0;
+  motion.walk_speed.y = ball.y;//ball.y>0?-30:30;
+  motion.walk_speed.rot = 0;
+  head.control_mode =  look_at_ball;
+ }
+ }
+ state check_ball_x
+ {
+ 	decision
+ 	{
+ 		if(between( value = ball.x, min = 100, max = 170 ))
+ 		goto decide_kick;
+ 		else stay;
+ 	}
+ 	action
+ 	{
+ 		motion.type = walk;
+        motion.walk_target.x = ball.x - 170;
+        motion.walk_target.y=0;
+        motion.walk_target.rot = opponent_goal.free_part.angle_to_center;
+        motion.walk_speed = 60;
+        head.control_mode = look_up_and_down;
+
+ 	}
+ }
+ state look_before_kick_right
+ {
+   decision
+   {
+      if(state_time > 1000 && motion.kick_forward( x = ball.x, y = ball.y, mirror = false, updates = false))
+     {
+  //      if(obstacle.distance_to_closest_center<=300&&(obstacle.vision.leftRatio < 0.4 || obstacle.vision.rightRatio < 0.4))
+   //         goto side_kick_right;
+//        else
+          goto kick;
+     }
+ else
+ {
+ stay;
+ }
+ }
+ action
+ { 
+ head.control_mode = look_at_ball; 
+ motion.type = stand;
+ }
+ }
+
+
+ 
+ state look_before_kick_left
+ {
+   decision
+   {
+      if(state_time > 1000 && motion.kick_forward( x = ball.x, y = ball.y, mirror = true, updates = false))
+     {
+   //    if(obstacle.distance_to_closest_center<=300)
+   //       goto side_kick_left;
+   //     else
+          goto kick;
+     }
+ else
+ {
+ stay;
+ }
+ }
+ action
+ { 
+ head.control_mode = look_at_ball; 
+ motion.type = stand;
+ }
+ }
+
+
+
+ state kick
+ 
+ {
+ /*decision
+ {
+ 	if(state_time>3000)
+ 		goto decide_kick;
+ 		else stay;
+ }*/
+ action
+ {
+   motion.type = bike;
+ }
+ }
+ state side_kick_left
+ {
+ 	action
+ 	{
+ 		walk_kick(id = sidewards_left);
+ 	}
+ }
+  state side_kick_right
+ {
+ 	action
+ 	{
+ 		walk_kick(id = sidewards_right);
+ 	}
+ }
+ /*
+ state turn_around_positive
+ {
+ decision
+ {    
+
+     if(abs(value = opponent_goal.free_part.angle_to_center ) < 5)
+      { 
+       goto decide_kick;
+      }
+    else
+      {
+      stay;
+      }
+    }
+
+    action
+      { 
+        head.control_mode  = state_time % 2000 < 1000 ? look_at_ball : look_up_and_down;
+        motion.type = walk;
+        motion.walk_speed.x = 0;
+        motion.walk_speed.y = 40;
+        motion.walk_speed.rot = -14;
+       }
+       }
+    
+
+  
+
+  state turn_around_negative
+  {
+  decision
+  {
+ if (abs(value = opponent_goal.free_part.angle_to_center ) < 5)
+     {
+       goto decide_kick;
+      }
+ else
+ {
+ stay;
+ }
+ }
+ action
+ { 
+  motion.type = walk;
+  motion.walk_speed.x = 0;
+  motion.walk_speed.y = -40;
+  motion.walk_speed.rot = 14;
+  head.control_mode = state_time % 2000 < 1000 ? look_at_ball : look_up_and_down;
+ }
+ }*/
+ 
+  state align_to_goal
+  {
+  decision
+  {
+  	 if(abs( value = opponent_goal.free_part.angle_to_center ) < 5)
+  	 	goto decide_kick;
+  	 else
+  	 	stay;
+  }
+     action
+    {
+      motion.type = walk;
+      motion.walk_target.x = ball.x - 280;
+      motion.walk_target.y = ball.y;
+      motion.walk_target.rot = opponent_goal.free_part.angle_to_center;
+      motion.walk_speed = 60;
+      head.control_mode = state_time % 4000 < 2000 ? look_up_and_down : look_at_ball;
+    }
+  }
+}

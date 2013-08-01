@@ -1,0 +1,10 @@
+motion_id = demoJesus
+"set all servos to 0 for servo calibration
+
+label start
+
+"HY HP  LSR LEY LER  RSR REY RER  LHYP LHR LHP LKP LAP LAR  RHYP RHR RHP RKP RAP RAR  Int Dur
+0 0 -90.000000 90.000000 0 0 -90.000000 90.000000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1000
+
+
+transition allMotions extern start

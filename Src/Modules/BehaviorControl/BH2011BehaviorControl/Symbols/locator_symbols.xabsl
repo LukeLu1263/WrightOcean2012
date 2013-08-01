@@ -1,0 +1,61 @@
+/** Symbols concerning self-localization. */
+namespace locator_symbols("Self-localization Symbols") {
+
+  /** The robot's x-position on the field. */
+  float input locator.pose.x "mm";
+
+  /** The robot's y-position on the field. */
+  float input locator.pose.y "mm";
+
+  /** The robot's angle on the field. */
+  float input locator.pose.angle "deg";
+  
+  /** The deviation of the position on the field. */
+  float input locator.pose.deviation "mm";
+
+  /** The validity of the pose. */
+  float input locator.pose.validity;
+
+  /** Calculates the distance to a specified point on the field */
+  float input locator.distance_to "mm" (
+    /** The x position on the field */
+    x [-3000..3000] "mm";
+    /** The y position on the field */
+    y [-2000..2000] "mm";
+  );
+
+  /** Calculates the angle to a specified point on the field */
+  float input locator.angle_to "deg" (
+    /** The x position on the field */
+    x [-3000..3000] "mm";
+    /** The y position on the field */
+    y [-2000..2000] "mm";
+  );
+
+  /** Calculates the relative x position to a specified point on the field */
+  float input locator.field_to_relative.x "mm" (
+    /** The x position on the field */
+    x [-3000..3000] "mm";
+    /** The y position on the field */
+    y [-2000..2000] "mm";
+  );
+
+  /** Calculates the relative y position to a specified point on the field */
+  float input locator.field_to_relative.y "mm" (
+    /** The x position on the field */
+    x [-3000..3000] "mm";
+    /** The y position on the field */
+    y [-2000..2000] "mm";
+  );
+  
+  /** Flag that determines if the robot has ground contact */
+  bool input locator.ground_contact;
+  
+  /** The time since the robot pose was picked up*/
+  float input locator.time_since_last_pickup;
+  /** The time since the robot pose was reset */
+  float input locator.time_since_last_pose_reset;
+  /** Opponent_goal.angle_width*/
+  float input locator.opponent_goal.angle_width;
+}
+

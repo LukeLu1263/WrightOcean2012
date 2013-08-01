@@ -1,0 +1,46 @@
+option keeper_search_for_ball
+{
+	initial state search_quickly_for_ball
+    {
+    	decision
+    	{
+    		if(ball.time_since_last_seen > 10000)
+    			goto search_widely_for_ball;
+    		else if(ball.was_seen)
+    			goto stare_at_ball;
+    		else
+    			stay;
+    	}
+    	action
+    	{
+    		head.control_mode = look_down_left_and_right;
+    		motion.type = stand;
+    	}
+    }
+    
+    state search_widely_for_ball
+  	{
+    	action
+    	{
+      		motion.type = walk;
+      		motion.walk_target.x = 0;
+      		motion.walk_target.y = 0;
+      		motion.walk_target.rot = ball.y < 0 ? -180 : 180;
+      		motion.walk_speed = 80;
+      		head.control_mode = look_up_and_down;
+    	}
+  	}
+  	
+  	state stare_at_ball
+  	{
+  		action
+  		{
+      		motion.type = walk;
+      		motion.walk_target.x = 0;
+      		motion.walk_target.y = 0;
+      		motion.walk_target.rot = 0;
+      		motion.walk_speed = 80;
+      		head.control_mode = look_at_ball;
+  		}
+  	}
+}

@@ -1,0 +1,5 @@
+# This script connects to a remote robot.
+# You have to adjust the ip address appropriatly.
+#sc Remote 192.168.1.151
+sc Remote ${IP address:,192.168.1.151,192.168.1.152,192.168.1.153}
+#sc Remote 10.0.1.151

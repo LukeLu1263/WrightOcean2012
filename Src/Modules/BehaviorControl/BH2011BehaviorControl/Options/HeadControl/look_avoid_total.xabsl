@@ -1,0 +1,34 @@
+option look_avoid_total
+{
+  initial state look_at_ball
+  {
+    decision
+    {
+      if (state_time > 1000)
+        goto down;
+      else
+        stay;
+    }
+    action
+    {
+    	look_at_ball();
+    }
+  }
+  state down  {
+    decision
+    {
+      if (state_time > 2000)
+        goto look_at_ball;
+      else
+        stay;
+    }
+    action
+    {
+      head.use_active_vision = false;
+      head.mode = pan_tilt;
+      head.pan = 0;
+      head.tilt = -20;
+      head.speed = 150;
+    }
+  }
+}

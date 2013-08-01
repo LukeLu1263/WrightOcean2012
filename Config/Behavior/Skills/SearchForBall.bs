@@ -1,0 +1,19 @@
+requires "../HeadControls/HeadControl.bs"
+requires "../HeadControls/SfbHeadControl.bs"
+requires "../Tools/Motion.bs"
+
+#this task should find a lost ball
+task searchForBall()
+
+  int startTime = input.time
+  for(;input.time - startTime < 5000; yield)
+    SfbHeadControl::scanInFront()
+    Motion::walkToXYR(-70.0, 0.0, 0.0, 100.0, false)
+
+  float turn = 0.5
+  if(Math::random() >= 0.5)
+    turn = -0.5
+  for(; true; yield)
+    SfbHeadControl::scanForBall()
+    Motion::walk(0.0, 0.0, turn)
+

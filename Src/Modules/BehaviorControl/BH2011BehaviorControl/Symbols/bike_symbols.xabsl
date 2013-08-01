@@ -1,0 +1,38 @@
+namespace bike_symbols("BIKE Symbols") {
+  /** The bike ids */
+  enum motion.bike {
+    kick_forward,
+    no_name,
+    none
+  };
+
+  /** The currently requested bMotion. */
+  enum motion.bike output motion.bike;
+
+  /** Set if the BMotion is dynamical or not */
+  bool output motion.bike.dynamical;
+  
+  /** Whether the currently requested bike motion should be mirrored. */
+  bool output motion.bike.mirror;
+    
+  /** Whether the currently requested bike motion should be mirrored. */
+  bool output bike.update;
+    
+  bool input motion.kick_forward (
+      /** The y coordinate of the ball. */
+      float y;
+      /** The x coordinate of the ball. */
+      float x;
+      bool mirror; 
+      bool updates;
+  );
+
+  /** Calculate dynamic Points for foot follow ball. */ 
+  bool input motion.bike.is_leaving_possible; 
+  
+  /** The currently executed bike motion. */
+  enum motion.bike input executed_motion.bike;
+
+  /** Whether the currently executed bike motion is mirrored. */
+  bool input executed_motion.bike.mirror;
+}

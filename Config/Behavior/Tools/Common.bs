@@ -1,0 +1,57 @@
+requires "BH"
+requires "Math"
+
+#======================================
+#relative2Field...
+#======================================
+func relative2FieldVector(Math::Vector2f p) : Math::Vector2f
+  return input.locator * p
+
+func relative2FieldXY(float x, float y) : Math::Vector2f
+  Math::Vector2f p
+  p.x = x
+  p.y = y
+  return input.locator * p
+
+func relative2FieldPose(Math::Pose2D p) : Math::Pose2D
+  Math::Pose2D pp
+  pp.translation = input.locator * p.translation
+  pp.rotation = Math::normalize(p.rotation + input.locator.rotation)
+  return pp
+
+#======================================
+#field2Relative...
+#======================================
+func field2RelativeVector(Math::Vector2f p) : Math::Vector2f
+  return input.locator.invert() * p
+
+func field2RelativeXY(float x, float y) : Math::Vector2f
+  Math::Vector2f p
+  p.x = x
+  p.y = y
+  return input.locator.invert() * p
+
+func field2RelativePose(Math::Pose2D p) : Math::Pose2D
+  Math::Pose2D pp
+  pp.translation = input.locator.invert() * p.translation
+  pp.rotation = Math::normalize(p.rotation - input.locator.rotation)
+  return pp
+
+#@target: in field coordinates
+#@returns: in relative coordinates
+func getPoseBehindBall(Math::Vector2f target, float dist) : Math::Pose2D
+  Math::Pose2D behindBall
+  behindBall.translation = input.locator * input.ball.model.position
+
+  Math::Vector2f ball2Target = (target - behindBall.translation)
+  ball2Target = ball2Target / ball2Target.abs()
+  behindBall.translation -= (ball2Target * dist)
+  behindBall.rotation = ball2Target.angle()
+
+  behindBall.translation = input.locator.invert() * behindBall.translation
+  behindBall.rotation -= input.locator.rotation
+  return behindBall
+
+func playSound(int sound)
+  output.sound.sound = sound
+

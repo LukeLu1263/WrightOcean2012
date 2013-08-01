@@ -1,0 +1,8 @@
+# use keyboard to set different game states
+jc press 9 xos game.state _initial # Shift+Crtl+I
+jc press 18 xos game.state ready # Shift+Crtl+R
+jc press 19 xos game.state set # Shift+Crtl+S
+jc press 16 xos game.state playing # Shift+Crtl+P
+jc press 6 xos game.state finished # Shift+Crtl+F
+jc press 2 xos game.kickoff_team game.team_color.blue # Shift+Ctrl+B 
+jc press 25 xos game.kickoff_team game.team_color.red # Shift+Ctrl+Y

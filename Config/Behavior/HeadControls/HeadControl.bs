@@ -1,0 +1,67 @@
+requires "BH"
+requires "Tools"
+requires "../Tools/Common.bs"
+
+func lookAt(float x, float y, float speed)
+  output.head.mode = BH::HeadMotionMode::targetOnGround
+  output.head.cameraControlMode = BH::CameraControlMode::auto
+  output.head.target.x = x
+  output.head.target.y = y
+  output.head.target.z = 0.0
+  output.head.speed = speed
+
+func lookAtV(Math::Vector2f v, float speed)
+  lookAt(v.x, v.y, speed)
+
+task lookAtTrajectory(Tools::Trajectory traj)
+  int startTime = input.time
+  int progress
+  for(; true; yield)
+    progress = (input.time - startTime) % traj.getDuration()
+    lookAtV(traj.getAt(progress), 150.0)
+
+func lookStraight()
+  lookAt(4000.0, 0.0, 150.0)
+
+func lookAtBall()
+  lookAtV(input.ball.model.position, 150.0)
+
+func lookAtOwnGoal()
+  lookAtV(Common::field2RelativeXY(-3000.0, 0.0), 200.0)
+
+func lookAtOppGoal()
+  lookAtV(Common::field2RelativeXY(3000.0, 0.0), 200.0)
+
+task lookAtBallAndGoal()
+  int startTime = input.time
+
+  for(; true; yield)
+    float progress = ((input.time - startTime) % 1000) / 1000.0
+
+    if(progress < 0.75)
+      lookAtBall()
+    else
+      lookAtOppGoal()
+
+task lookActive(float ballFactor)
+  #this is a stupid replacement for the active vision
+  int startTime = input.time
+
+  for(; true; yield)
+    float progress = ((input.time - startTime) % 3000) / 3000.0
+
+    if(progress > 0.5)
+      if(Math::fabs(input.locator.rotation) < Math::pi/2)
+        lookAtOppGoal()
+      else
+        lookAtOwnGoal()
+    else
+      lookAtBall()
+
+func lookDown()
+  output.head.cameraControlMode = BH::CameraControlMode::lower
+  output.head.mode = BH::HeadMotionMode::panTilt
+  output.head.pan = 0.0
+  output.head.tilt = -5.0
+  output.head.speed = 150.0
+

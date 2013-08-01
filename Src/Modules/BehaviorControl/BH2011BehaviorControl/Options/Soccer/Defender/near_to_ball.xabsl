@@ -1,0 +1,145 @@
+option near_to_ball
+{
+	initial state decide
+	{
+		decision
+		{   
+		    //球在禁区两侧时
+		    if(abs(value = opponent_goal.free_part.angle_to_center) > 5 && ((ball.position.field.y > 1900 && locator.pose.angle > 90) || (ball.on_field.x < -2400 && between (value = ball.on_field.y , min =-1300, max= -1100))))
+		    	goto behind_ball_positive1;
+		    else if (abs(value = opponent_goal.free_part.angle_to_center) > 5 && ((ball.position.field.x < -1900 && locator.pose.angle < -90) || (ball.on_field.x < -2400 && between(value = ball.on_field.y,min = 1100, max= 1300 ))))
+			    goto behind_ball_negative;
+			//球在普通区域
+		    else if (opponent_goal.free_part.angle_to_center < -5)
+			    goto behind_ball_positive;
+		    else if (opponent_goal.free_part.angle_to_center > 5 )
+	    		goto behind_ball_negative;
+		    else if(ball.y < -45)
+                goto look_before_kick_right;
+            else if(ball.y > 45)
+                goto look_before_kick_left; 
+			else
+			    stay;
+	   }
+	   action
+	   {
+	   	    motion.type = walk;
+            motion.walk_speed.x = 0;
+            motion.walk_speed.y = ball.y>0?-30:30;
+            motion.walk_speed.rot = 0;
+            head.control_mode =  look_at_ball;
+	   }
+	}
+	
+	state behind_ball_positive
+	{
+		decision
+		{
+			if (abs(value = opponent_goal.free_part.angle_to_center ) < 5)
+				goto decide;
+			else
+				stay;
+		}
+		action
+		{
+			head.control_mode = look_at_ball;
+            motion.type = walk;
+		//	motion.walk_target.x = ball.x - 150;
+		//	motion.walk_target.y = ball.y - 30;
+		//	motion.walk_target.rot = opponent_goal.free_part.angle_to_center;
+            motion.walk_speed.x = 0;
+            motion.walk_speed.y = 60;
+            motion.walk_speed.rot = -20;
+		}
+	}
+	
+	state behind_ball_positive1
+	{
+		decision
+		{
+			if (abs(value = opponent_goal.free_part.angle_to_center ) < 5)
+				goto decide;
+			else
+				stay;
+		}
+		action
+		{
+			head.control_mode = look_at_ball;
+            motion.type = walk;
+		//	motion.walk_target.x = ball.x - 150;
+		//	motion.walk_target.y = ball.y - 30;
+		//	motion.walk_target.rot = opponent_goal.free_part.angle_to_center;
+            motion.walk_speed.x = 0;
+            motion.walk_speed.y = 60;
+            motion.walk_speed.rot = -20;
+		}
+	}
+
+	state behind_ball_negative
+	{
+		decision
+		{
+			if (abs(value = opponent_goal.free_part.angle_to_center ) < 5)
+				goto decide;
+			else
+				stay;
+		}
+		action
+		{
+		    head.control_mode = look_at_ball;
+            motion.type = walk;
+		//	motion.walk_target.x = ball.x - 150;
+		//	motion.walk_target.y = ball.y - 30;
+		//	motion.walk_target.rot = opponent_goal.free_part.angle_to_center;
+            motion.walk_speed.x = 0;
+            motion.walk_speed.y = -60;
+            motion.walk_speed.rot = 20;
+		}
+	}
+	
+	state look_before_kick_left
+   {
+        decision
+       {
+        if(state_time > 1000 && motion.kick_forward( x = ball.x+2000, y = ball.y+2000, mirror = true, updates = false))
+          goto kick;
+        else
+          stay;
+       }
+       action
+      { 
+        head.control_mode = look_at_ball; 
+        motion.type = stand;
+       }
+    }
+    state look_before_kick_right
+   {
+        decision
+       {
+        if(state_time > 1000 && motion.kick_forward( x = ball.x+2000, y = ball.y+2000, mirror = false, updates = false))
+          goto kick;
+        else
+          stay;
+       }
+       action
+      { 
+        head.control_mode = look_at_ball; 
+        motion.type = stand;
+       }
+    }
+    
+    state kick
+    {
+    	decision
+    	{
+    	    if (state_time > 3000)
+    	      goto decide;
+    		else 
+    		  stay;
+    	}
+    	action
+    	{
+    		motion.type = bike;
+    	}
+    }
+}

@@ -1,0 +1,91 @@
+option go_to_ball_and_avoid_obstacle
+{
+  initial state turn_to_ball
+  {
+    decision
+    {
+      if(abs( value = ball.angle ) < 5)
+        goto walk_to_ball_and_avoid;
+      else 
+        stay;
+    }
+    action
+    {
+      motion.type = walk;
+      motion.walk_target.x = 0;
+      motion.walk_target.y = 0;
+      motion.walk_target.rot = ball.angle;
+      motion.walk_speed = 50;
+      head.control_mode = look_up_and_down;
+    }
+  }
+  
+  state walk_to_ball_and_avoid
+  {
+  	decision
+  	{
+  	  //obstacle in left,and move right
+  	  if(obstacle.distance_to_closest_center_left<500&&(ball.distance>obstacle.distance_to_closest_center_left))
+        goto side_right_obs;
+      //obstacle in right,and move left
+      else if(obstacle.distance_to_closest_center_right<500&&(ball.distance>obstacle.distance_to_closest_center_right))
+        goto side_left_obs;
+     // else if ((ball.position.field.y > 1980 || ball.position.field.y < -1980) && ball.distance <500 )
+	//	    	goto wait_for_ball;
+	  else
+      	  stay;
+    }
+    action
+    {
+      motion.type = walk;
+      motion.walk_speed.x = (ball.x < 500)? 30 : ball.x -150; 
+      motion.walk_speed.y = ball.y;
+      motion.walk_speed.rot = ball.angle; 
+      head.control_mode = state_time%2000>1000?look_up_and_down:look_at_ball;
+    }
+  }
+
+  /*state wait_for_ball
+	{
+		decision
+		{
+			if (state_time > 1500)
+				goto turn_to_ball;
+			else
+				stay;
+		}
+		action	  
+		{
+			motion.type = walk;
+            motion.walk_target.x = 0;
+            motion.walk_target.y = ball.y;
+            motion.walk_target.rot =0;
+            motion.walk_speed = 60;
+            head.control_mode=look_at_ball; 
+		}
+	}*/
+  
+  state side_right_obs
+  {
+  	  action
+  	  { 
+  	       motion.type = walk;
+           motion.walk_speed.x=0;
+           motion.walk_speed.y = 30; 
+           motion.walk_speed.rot = 0;
+           head.control_mode =  look_active_with_ball;  
+  	  }
+  }
+  
+  state side_left_obs
+  {
+  	  action
+  	  {
+  	  	motion.type = walk;
+           motion.walk_speed.x=0;
+           motion.walk_speed.y = -30; 
+           motion.walk_speed.rot = 0;
+           head.control_mode =  look_active_with_ball;  
+  	  }
+  } 
+}

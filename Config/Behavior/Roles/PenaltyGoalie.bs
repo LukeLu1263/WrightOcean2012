@@ -1,0 +1,68 @@
+requires "BH"
+requires "../HeadControls/HeadControl.bs"
+requires "../Tools/Common.bs"
+requires "../Tools/Motion.bs"
+requires "../Skills/SearchForBall.bs"
+
+func reacted() : bool
+  return input.game.secondaryState == BH::SecondaryState::penaltyshoot and \
+         (input.motionInfo.motion == BH::Motion::specialAction and \
+          input.motionInfo.specialAction.specialAction == BH::SpecialAction::keeperJumpLeftSign)
+
+task play()
+  #====================================
+  func missingBall() : bool
+    return input.time - input.ball.lastSeen > 5000
+
+  func needReact() : bool
+    return input.ball.timeWhenBallReachesOwnYAxis > 300 and \
+           input.ball.timeWhenBallReachesOwnYAxis < 2000 and \
+           Math::fabs(toFloat(input.ball.yPosWhenBallReachesOwnYAxis)) < 1200
+  #====================================
+
+  #hmmmm we need some check here whether we are the kicking team
+  #but I don't see how to do it when considering a penalty shoot from
+  #withing the game...
+  #this only works for penalty shootout
+  #disabled for CodeRelease
+  #for(; input.team.color == BH::Team::red; yield)
+  #  Motion::stand()
+  #  HeadControl::lookDown()
+
+  int startTime = input.time
+  for(; input.time - startTime < 1000; yield)
+    Motion::walk(100.0, 0.0, 0.0)
+    HeadControl::lookAtBall()
+
+  #search for ball / look at ball while sitting and wait for a shoot
+  for(; !needReact(); yield)
+    Motion::setSpecialAction(BH::SpecialAction::sitDownKeeper, false)
+    if(missingBall())
+      SfbHeadControl::scanInFrontUpDown()
+    else
+      HeadControl::lookAtBall()
+
+  #do a reaction depending on yPosWhenBallReachesOwnYAxis
+  int yPosWhenReaches = input.ball.yPosWhenBallReachesOwnYAxis
+
+  if(Math::fabs(toFloat(yPosWhenReaches)) < 200)
+    for(; true; yield)
+      #Motion::setSpecialAction(BH::SpecialAction::genuflect, false)
+      output.leds.setLeftEyeColor(BH::EyeColors::magenta)
+      output.leds.setState(BH::LEDs::rightEye, BH::LEDState::on)
+      output.leds.setRightEyeColor(BH::EyeColors::magenta)
+      output.leds.setState(BH::LEDs::rightEye, BH::LEDState::on)
+      HeadControl::lookStraight()
+  else if(yPosWhenReaches > 0 and yPosWhenReaches < 1200)
+    for(; true; yield)
+      Motion::setSpecialAction(BH::SpecialAction::keeperJumpLeftSign, false)
+      HeadControl::lookStraight()
+      output.leds.setLeftEyeColor(BH::EyeColors::magenta)
+      output.leds.setState(BH::LEDs::rightEye, BH::LEDState::on)
+  else if(yPosWhenReaches < 0 and yPosWhenReaches > -1200)
+    for(; true; yield)
+      Motion::setSpecialAction(BH::SpecialAction::keeperJumpLeftSign, true)
+      HeadControl::lookStraight()
+      output.leds.setRightEyeColor(BH::EyeColors::magenta)
+      output.leds.setState(BH::LEDs::rightEye, BH::LEDState::on)
+

@@ -1,0 +1,38 @@
+requires "HeadControls/HeadControl.bs"
+requires "Tools/Motion.bs"
+
+task penalizedControl()
+  #while penalized
+  for(; input.robot.penalty != BH::Penalty::none; yield)
+    Motion::stand()
+    HeadControl::lookDown()
+
+  #no "after penalized control for penaltyshootout"
+  if(input.game.secondaryState == BH::SecondaryState::penaltyshoot)
+    yield TaskState::done
+
+  #look at goals
+  int goalPostsSeen = 0
+
+  #look at first goal
+  int startTime = input.time
+  for(; input.time - startTime < 2000 and goalPostsSeen < 10; yield)
+    Motion::stand()
+    HeadControl::lookAt(2000.0, -3000.0, 200.0)
+    if(input.goal.own.anyPostLastSeen == input.time or input.goal.opp.anyPostLastSeen == input.time)
+      goalPostsSeen += 1
+
+  #look at second goal
+  startTime = input.time
+  for(; input.time - startTime < 3000 and goalPostsSeen < 10; yield)
+    Motion::stand()
+    HeadControl::lookAt(2000.0, 3000.0, 200.0)
+    if(input.goal.own.anyPostLastSeen == input.time or input.goal.opp.anyPostLastSeen == input.time)
+      goalPostsSeen += 1
+
+  #look for ball?
+  #startTime = input.time
+  #for(; input.time - startTime < 5000 and !input.ball.lastSeen = input.time; yield)
+  #  Motion::stand()
+  #  HeadControl::scanAreaInFront()
+

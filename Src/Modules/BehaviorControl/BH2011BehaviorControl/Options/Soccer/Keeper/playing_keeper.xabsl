@@ -1,0 +1,131 @@
+option playing_keeper
+{
+	// Note that this is common decision.
+    common decision
+    {
+        /* keeper is not in his available area.*/
+        if( (locator.pose.x < field.own_ground_line.x || locator.pose.x > field.own_penalty_area.x+200 || abs(value = locator.pose.y) > 1200) && ball.distance > 300)
+            goto reach_to_desired_keeper_pose;
+
+        /* ball have not seen in a little bit seconds.*/
+        else if(ball.time_since_last_seen > 5000)
+            goto keeper_search_for_ball;
+            
+        /* The following show that ball is seen.*/
+        else
+        {
+        	// ball is rolling quickly to the left(or right) of own goal.
+	    	     if(between(value = ball.end_position.field.y, min = 300, max = 800)
+	    	&& ball.end_position.field.x < field.own_ground_line.x && ball.on_field.speed.x < -500)
+		    	goto jump_keeper_left;
+            // ball is rolling quickly to the right of own goal.
+   	    	else if(between(value = ball.end_position.field.y, min = -800, max = -300)
+   	    	&& ball.end_position.field.x < field.own_ground_line.x && ball.on_field.speed.x < -500)
+ 				goto jump_keeper_right;
+ 			// ball is rolling quickly to the keeper.
+ 			else if(abs(value = ball.end_position.y) < 300 && ball.on_field.speed.x < -300)
+	    		goto quick_sit_down;
+		    	
+        	// ball is near to the keeper, so we just clear the ball.
+        	else if(ball.on_field.x < field.own_penalty_area.x+150 
+        	&& abs(value = ball.on_field.y) < 1200)
+        		goto keeper_clear_ball;
+        	
+            // ball on our half of the field.
+            else if(ball.on_field.x < 0)
+                goto reach_to_desired_keeper_pose;
+                
+            // ball on the opposite half of the field.
+            else if(ball.on_field.x > 0)
+                goto keeper_back_to_own_goal;
+        }
+    }
+    
+    initial state none
+    {
+        action
+        {
+			/* Do nothing.*/
+        }
+    }
+    
+    state reach_to_desired_keeper_pose
+    {
+		action
+		{
+			reach_to_keeper_desired_pose();
+		}
+    }
+    
+    state keeper_search_for_ball
+    {
+		action
+		{
+			keeper_search_for_ball();
+		}
+    }
+    
+    state jump_keeper_left
+   {
+      decision
+     {
+		else if(action_done)
+		  goto keeper_search_for_ball;
+	    else
+	      stay;
+     }
+     action
+     {
+        head.control_mode = none;
+		special_action(id = dive_keeper, mirror = false);
+     }
+   }
+   
+    state jump_keeper_right
+   {
+     decision
+     {
+      	else if(action_done)
+       	  goto keeper_search_for_ball;
+		else
+	      stay; 
+     }
+     action
+     {
+     	head.control_mode = none;
+		special_action(id = dive_keeper, mirror = true);
+     }
+   }
+   
+    state quick_sit_down
+   {
+   		decision
+   		{
+   			else if(action_done)
+   				goto none;
+   			else
+   				stay;
+   		}
+   		action
+   		{
+   			special_action(id = sit_down_keeper);
+   			head.control_mode = none;
+ 	  	}
+   }
+       
+    state keeper_clear_ball
+    {
+        action
+        {
+            keeper_clear_ball();
+        }
+    }
+    
+    state keeper_back_to_own_goal
+    {
+        action
+        {
+            keeper_back_to_own_goal();
+        }
+    }
+}

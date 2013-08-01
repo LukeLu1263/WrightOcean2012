@@ -1,0 +1,41 @@
+option turn_for_ball
+{
+	initial state ball_not_seen
+	{
+		decision
+		{
+			if(ball.was_seen)
+				goto ball_seen;
+			else
+				stay;
+		}
+		action
+		{
+			motion.type = walk;
+			motion.walk_target.x = 0;
+			motion.walk_target.y = 0;
+			motion.walk_target.rot = ball.seen.y < 0 ? -180 : 180;
+			motion.walk_speed = 50;
+			head.control_mode = look_up_and_down;
+		}
+	}
+
+	state ball_seen
+	{
+		decision
+		{
+			if(ball.time_since_last_seen > 500)
+				goto ball_not_seen;
+			else
+				stay;
+		}
+		action
+		{
+			motion.type = walk;
+			motion.walk_target.x = 0;
+			motion.walk_target.y = 0;
+			motion.walk_target.rot = ball.angle * 2;
+			head.control_mode = look_at_ball;
+		}
+	}
+}

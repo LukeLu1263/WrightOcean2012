@@ -1,0 +1,66 @@
+/** A test defender in BH2011 with common decision */
+
+option playing_defender
+{
+	common decision
+	{
+		if(ball.time_since_last_seen > 6000)
+          goto search_for_ball;
+       // else if (ball.time_since_last_seen > 4000)
+       //     goto get_ball_by_team;
+        else if (ball.on_field.x > 0 )
+          goto ball_on_opponent_area;
+		else if (ball.on_field.x < -2400 && between (value = ball.on_field.y, min = -1100,max = 1100))
+          goto ball_near_own_goal;
+        else if (ball.on_field.x < 0 && ball.distance < 185)
+          goto near_to_ball;
+        else if (ball.on_field.x < 0 && ball.distance > 300)
+          goto far_to_ball;
+        
+	}
+	
+	initial state search_for_ball
+	{
+		action
+		{
+			motion.type = walk;
+            motion.walk_target.x = 0;
+            motion.walk_target.y = 0;
+            motion.walk_target.rot = ball.y < 0 ? 180 : -180;
+            motion.walk_speed = 60;
+            head.control_mode = look_up_and_down;
+		}
+	}
+	
+	state ball_on_opponent_area
+	{
+		action
+		{
+			ball_on_opponent_area();
+		}
+	}
+	
+	state far_to_ball
+	{
+		action
+		{
+			go_to_ball_and_avoid_obstacle();
+		}
+	}
+	
+	state near_to_ball
+	{
+		action
+		{
+			near_to_ball();
+		}
+	}
+	
+	state ball_near_own_goal
+	{
+		action
+		{
+			ball_near_own_goal();
+		}
+	}
+}

@@ -1,0 +1,103 @@
+/** Symbols for accessing ball position and speed */
+namespace ball_symbols("Ball Symbols") {
+
+  /** Position of the ball in x direction relative to the field */
+  float input ball.position.field.x "mm";
+  /** Position of the ball in y direction relative to the field */
+  float input ball.position.field.y "mm";
+
+  /** Position of the ball after it has stopped in x direction relative to the field */
+  float input ball.end_position.field.x "mm";
+  /** Position of the ball after it has stopped in y direction relative to the field */
+  float input ball.end_position.field.y "mm";
+  
+  /** Position of the ball in x direction relative to the robot */
+  float input ball.x "mm";
+  /** Position of the ball in y direction relative to the robot */
+  float input ball.y "mm";
+
+   /** Position of the ball in bike coords. */
+  float input ball.kick.x "mm";
+  /** Position of the ball in bike coords.*/
+  float input ball.kick.y "mm";
+
+  /** Position of the ball after it has stopped in x direction relative to the robot */
+  float input ball.end_position.x "mm";
+  /** Position of the ball after it has stopped in y direction relative to the robot */
+  float input ball.end_position.y "mm";
+
+  /** Position of the seen ball in x direction relative to the robot based on last Perception */
+  float input ball.seen.x "mm";
+  /** Position of the ball in y direction relative to the robot  based on last Perception*/
+  float input ball.seen.y "mm";
+
+  /** relativ last seen estimate of the ball (x direction) */
+  float input ball.seen.estimate.x "mm";
+  /** relativ last seen estimate of the ball (y direction) */
+  float input ball.seen.estimate.y "mm";
+
+  /** absolut last seen estimate position of the ball (x direction) */
+  float input ball.position.seen.estimate.x "mm";
+  /** absolut last seen estimate position of the ball (y direction) */
+  float input ball.position.seen.estimate.y "mm";
+
+  /** Angle of the ball relative to the robot based on last Perception*/
+  float input ball.seen.angle "degree";
+  
+    /** Distance of the seen ball to the robot */
+  float input ball.seen.distance "mm";
+
+  /** Distance of the ball to the robot */
+  float input ball.distance "mm";
+
+  /** Angle of the ball to the robot */
+  float input ball.angle "deg";
+
+  /** Whether the ball was seen in the last 500 ms */
+  bool input ball.was_seen;
+
+  /** Time since the ball was seen */
+  float input ball.time_since_last_seen "ms";
+  
+  /** Speed of the Ball in x direction relative to the field */
+  float input ball.speed.field.x "mm/s";
+  /** Speed of the Ball in y direction relative to the field */
+  float input ball.speed.field.y "mm/s";
+
+  /** Speed of the Ball in x direction relative to the robot */
+  float input ball.speed.robot.x "mm/s";
+  /** Speed of the Ball in y direction relative to the robot */
+  float input ball.speed.robot.y "mm/s";
+
+  /** The time when the ball crosses our y-axis, or a 100000 if ball is resting */
+  float input ball.time_when_own_y_axis_reached "ms";
+
+  /** The y position when the ball crosses our y-axis */
+  float input ball.position_when_ball_reaches_own_y_axis.y "mm";
+
+  /** distance between ball and own goal */
+  float input ball.distance.own_goal "mm";
+
+
+  /** Whether any team mate thinks that the ball is moving. */
+  bool input ball.is_moving.any_team_mate;
+  /** Time since the ball was not seen although it should be visible */
+  float input ball.time_since_disappeared "ms";
+  
+  
+  /** Position of the ball in x direction relative to the field */
+  float input ball.on_field.x "mm";
+  /** Position of the ball in y direction relative to the field */
+  float input ball.on_field.y "mm";  
+  /** Angle from robots position (without its rotation) to the ball */
+  float input ball.on_field.angle "deg";
+  
+  /** Speed of the Ball in x direction relative to the field */
+  float input ball.on_field.speed.x "mm/s";
+  /** Speed of the Ball in y direction relative to the field */
+  float input ball.on_field.speed.y "mm/s";
+  
+  float input ball.strikerPn;
+  float input ball.offensiveSupporterPn;
+  float input ball.defensiveSupporterPn;
+}

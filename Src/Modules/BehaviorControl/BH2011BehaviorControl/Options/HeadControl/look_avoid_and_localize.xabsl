@@ -1,0 +1,51 @@
+option look_avoid_and_localize
+{
+  state up
+  {
+    decision
+    {
+      if (state_time > 1000)
+        goto look_at_ball;
+      else
+        stay;
+    }
+    action
+    {
+      head.use_active_vision = true;
+      head.active_vision_ball_factor = 1.0;
+      head.speed = 100;
+    }
+  }
+  initial state look_at_ball
+  {
+    decision
+    {
+      if (state_time > 1000)
+        goto down;
+      else
+        stay;
+    }
+    action
+    {
+    	look_at_ball();
+    }
+  }
+
+  state down  {
+    decision
+    {
+      if (state_time > 1000)
+        goto up;
+      else
+        stay;
+    }
+    action
+    {
+      head.use_active_vision = false;
+      head.mode = pan_tilt;
+      head.pan = 0;
+      head.tilt = -20;
+      head.speed = 150;
+    }
+  }
+}

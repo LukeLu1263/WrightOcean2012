@@ -1,0 +1,14 @@
+option side_right_obs
+{
+    initial state side_right_obs 
+	{
+   		 action 
+   		 {
+  			motion.type = walk;
+ 			motion.walk_speed.y = -30; 
+			motion.walk_speed.x=0;
+  			motion.walk_speed.rot = 0;
+ 			head.control_mode =  look_at_ball;  
+    	 }
+  	}
+}

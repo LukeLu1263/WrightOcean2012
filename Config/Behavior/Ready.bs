@@ -1,0 +1,87 @@
+requires "BH"
+requires "Tools/Motion.bs"
+requires "Tools/Common.bs"
+requires "HeadControls/HeadControl.bs"
+
+task ready()
+  #====================================
+  func getReadyPose(int role) : Math::Pose2D
+    #TODO: move poses to input "symbols"
+    Math::Pose2D p
+    if(role == BH::Role::keeper)
+      p.translation.x = -2800.0
+      p.translation.y = 0.0
+      p.rotation = Math::fromDegrees(0.0)
+    else if(role == BH::Role::defender)
+      p.translation.x = -2000.0
+      p.translation.y = -350.0
+      p.rotation = Math::fromDegrees(0.0)
+    else
+      #supporter and striker depend on kickOffTeam
+      #own kickoff
+      if(input.game.kickOffTeam == input.team.color)
+        if(role == BH::Role::supporter)
+          p.translation.x = -300.0
+          p.translation.y = -1200.0
+          p.rotation = Math::fromDegrees(45.0)
+        else if(role == BH::Role::striker)
+          p.translation.x = -250.0
+          p.translation.y = 0.0
+          p.rotation = Math::fromDegrees(0.0)
+      #opponent kickoff
+      else
+        if(role == BH::Role::supporter)
+          p.translation.x = -1500.0
+          p.translation.y = -400.0
+          p.rotation = Math::fromDegrees(0.0)
+        else if(role == BH::Role::striker)
+          p.translation.x = -1500.0
+          p.translation.y = 200.0
+          p.rotation = Math::fromDegrees(0.0)
+    return Common::field2RelativePose(p)
+  #====================================
+
+  #look around for 2 secs
+  int startTime = input.time
+  for(; input.time - startTime < 2000; yield)
+    TRACES("look around")
+    Motion::stand()
+    HeadControl::lookActive(0.5)
+
+  #wait offsets for certain roles
+  int waitUntil = input.time
+  if(input.robot.number == BH::Role::keeper or input.robot.number == BH::Role::supporter)
+    waitUntil += 3000
+
+  #wait until waitUntil
+  for(; input.time - waitUntil < 0; yield)
+    TRACES("wait for waitUntil")
+    Motion::stand()
+    HeadControl::lookActive(0.5)
+
+  #goto ready pose
+  Math::Pose2D readyPose
+  for(; true;)
+
+    #goto pose "state"
+    for(; true; yield)
+      TRACES("goto pose")
+      readyPose = getReadyPose(input.robot.number)
+
+      if(readyPose.translation.squareAbs() < 10.0 and Math::fabs(readyPose.rotation) < Math::fromDegrees(2.0))
+        break
+
+      Motion::walkToPose(readyPose, 100.0, false)
+      HeadControl::lookActive(0.5)
+
+    #hold pose "state"
+    for(; true; yield)
+      TRACES("pose is good enough")
+      readyPose = getReadyPose(input.robot.number)
+
+      if(readyPose.translation.squareAbs() > 200.0 or Math::fabs(readyPose.rotation) > Math::fromDegrees(15.0))
+        break
+
+      Motion::stand()
+      HeadControl::lookActive(0.5)
+

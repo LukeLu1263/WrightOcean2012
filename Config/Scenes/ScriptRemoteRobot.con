@@ -1,0 +1,4 @@
+call scriptconnect
+call ViewsJpeg
+call coltable
+dr automatedRequests:xabsl:debugSymbols once

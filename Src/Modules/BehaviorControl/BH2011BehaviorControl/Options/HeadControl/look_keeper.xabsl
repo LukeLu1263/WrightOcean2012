@@ -1,0 +1,94 @@
+/** Scan mode for scanning for goals, ball and penalty area lines */
+// not finished...
+option look_keeper
+{
+  initial state look_right
+  {
+    decision
+    {
+      if(!head.is_moving)
+        goto look_right_down;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = -80;
+      head.tilt = 17;
+      head.speed = 100;
+    }
+  }
+
+  state look_center
+  {
+    decision
+    {
+      if(!head.is_moving)
+        goto look_left_down;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = 0;
+      head.tilt = -8.5;
+      head.speed = 100;
+    }
+  }
+
+  state look_left
+  {
+    decision
+    {
+      if(!head.is_moving)
+        goto look_right;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = 80;
+      head.tilt = 17;
+      head.speed = 100;
+    }
+  }
+
+  state look_left_down
+  {
+    decision
+    {
+      if(!head.is_moving)
+        goto look_left;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = 30 ;
+      head.tilt = 0;
+      head.speed = 100;
+    }
+  }
+
+  state look_right_down
+  {
+    decision
+    {
+      if(!head.is_moving)
+        goto look_center;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = pan_tilt;
+      head.pan = -30;
+      head.tilt = 0;
+      head.speed = 100;
+    }
+  }
+}

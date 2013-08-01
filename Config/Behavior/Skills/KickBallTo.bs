@@ -1,0 +1,41 @@
+requires "BH"
+requires "Math"
+requires "../Tools/Motion.bs"
+requires "../Tools/Common.bs"
+requires "../HeadControls/HeadControl.bs"
+
+task kickBallTo(Math::Vector2f target, int kick)
+  #====================================
+  func isBallClose(Math::Pose2D pose) : bool
+    return pose.translation.squareAbs() < Math::sqri(200) and \
+           Math::fabs(pose.rotation) < Math::fromDegrees(10.0)
+  func readyToKick(Math::Pose2D pose) : bool
+    return pose.translation.squareAbs() < Math::sqri(10) and \
+           Math::fabs(pose.rotation) < Math::fromDegrees(1.0) and \
+           input.time - input.ball.lastSeen == 0
+  #====================================
+  Math::Pose2D pose
+  Math::Pose2D relPose
+
+  #goto kickpose
+  for(; true; yield)
+    pose = input.kick.getKickPose(kick, false, target)
+    relPose = Common::field2RelativePose(pose)
+
+    if(input.ball.getKickPoseReached(relPose))
+      break
+
+    Motion::walkToPoseField(pose, 100.0, true)
+
+    if(!isBallClose(relPose))
+      HeadControl::lookActive(1.0)
+    else
+      HeadControl::lookAtBall()
+
+  #kick
+  for(; true; yield)
+    Motion::executeKick(kick, false)
+    if(taskState(Motion::executeKick) == TaskState::done)
+      break
+    HeadControl::lookAtBall()
+

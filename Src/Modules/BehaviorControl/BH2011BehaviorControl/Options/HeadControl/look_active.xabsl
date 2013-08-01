@@ -1,0 +1,76 @@
+option look_active
+{
+  common decision
+  {
+    if( ball.time_since_disappeared < 200)
+      goto look_at_ball;  
+  }
+  state look_active
+  {
+    decision
+    {
+      else if(ball.time_since_disappeared == 0)
+        goto look_active_ball_known;
+      else
+        stay;
+    }
+    action
+    {
+      head.use_active_vision = true;
+      head.active_vision_ball_factor = 0.2;
+      head.speed = 100;
+    }
+  }
+  initial state look_active_ball_known
+  {
+    decision
+    {
+      else if(ball.time_since_disappeared > 200)
+        goto look_active_for_ball;
+      else
+        stay;
+    }
+    action
+    {
+      head.use_active_vision = true;
+      head.active_vision_ball_factor = 0.5;
+      head.speed = 100;
+    }
+  }
+  state look_active_for_ball
+  {
+    decision
+    {
+      else if(ball.time_since_disappeared == 0)
+        goto look_active_ball_known;
+      else if(state_time > 2000)
+        goto look_active;
+      else
+        stay;
+    }
+    action
+    {
+      head.use_active_vision = true;
+      head.active_vision_ball_factor = 1;
+      head.speed = 100;
+    }
+  }
+  state look_at_ball
+  {
+    decision
+    {
+      else if(ball.time_since_disappeared > 200)
+        goto look_active_for_ball;
+      else
+        stay;
+    }
+    action
+    {
+      head.mode = target_on_ground;
+      head.target.x = ball.x;
+      head.target.y = ball.y;
+      head.target.z = 35;
+      head.speed = 100;
+    }
+  }
+}

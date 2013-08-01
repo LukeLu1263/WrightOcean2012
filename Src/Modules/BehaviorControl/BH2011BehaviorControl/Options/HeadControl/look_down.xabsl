@@ -1,0 +1,19 @@
+/** lets the robot look down */
+option look_down
+{
+  initial state down
+  {
+    decision
+    {
+      stay;
+    }
+    action
+    {
+      head.ccmode = lowerCamera;
+      head.mode = pan_tilt;
+      head.pan = 0;
+      head.tilt = - 25;
+      head.speed = 150;
+    }
+  }
+}

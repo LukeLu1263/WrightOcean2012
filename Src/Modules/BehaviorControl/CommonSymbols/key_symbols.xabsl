@@ -1,0 +1,7 @@
+/** Symbols for the state of the robots keys. */
+namespace key_symbols("Key Symbols") {
+  bool input key.right_foot_pressed_and_released;
+  bool input key.left_foot_pressed_and_released;
+  bool input key.chest_button_pressed_and_released;
+}
+

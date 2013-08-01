@@ -1,0 +1,12 @@
+option look_active_without_ball
+{
+  initial state look_active
+  {
+    action
+    {
+      head.use_active_vision = true;
+      head.active_vision_ball_factor = 0;
+      head.speed = 100;
+    }
+  }
+}

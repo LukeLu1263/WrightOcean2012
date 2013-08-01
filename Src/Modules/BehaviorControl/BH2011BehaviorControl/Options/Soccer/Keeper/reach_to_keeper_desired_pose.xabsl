@@ -1,0 +1,38 @@
+option reach_to_keeper_desired_pose
+{
+	initial state desired_pose
+	{
+		decision
+		{
+			if(soccer.desired_keeper_pose.reached)
+				goto stay_here;
+			else
+				stay;
+		}
+    	action
+    	{
+            motion.type = walk;
+            motion.walk_target.x = locator.field_to_relative.x(x = soccer.desired_keeper_pose.x, y = soccer.desired_keeper_pose.y);
+            motion.walk_target.y = locator.field_to_relative.y(x = soccer.desired_keeper_pose.x, y = soccer.desired_keeper_pose.y);
+            motion.walk_target.rot = soccer.desired_keeper_pose.angle;
+            motion.walk_speed = 100;
+            head.control_mode = look_at_ball;
+    	}
+    }	
+    
+    state stay_here
+    {
+    	decision
+    	{
+    		if(!soccer.desired_keeper_pose.reached)
+    			goto desired_pose;
+    		else
+    			stay;
+    	}
+    	action
+    	{
+    		motion.type = stand;
+    		head.control_mode = look_at_ball;
+    	}
+    }
+}

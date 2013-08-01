@@ -1,0 +1,40 @@
+/* abslute variable.*/
+option walk_omnidirectional {
+
+	@x;
+	@y;
+	/** absolute angle  */
+	@angle;
+
+	initial state go_near 
+     {
+		
+       decision 
+      {
+		if(locator.distance_to(x = @x, y = @y) < 100 && abs(value = locator.pose.angle - @angle) < 10)
+		  goto done;
+	     else
+		  stay;
+       }	
+	action 
+       {
+        motion.type = walk;
+	    motion.walk_speed.x = locator.distance_to(x = @x, y = @y) * cos(angle = abs(value = locator.angle_to(x = @x, y = @y)));
+        motion.walk_speed.y = locator.distance_to(x = @x, y = @y) * sin(angle = abs(value = locator.angle_to(x = @x, y = @y)));
+        motion.walk_speed.rot = (200 / (locator.distance_to(x = @x, y = @y) != 0 ? locator.distance_to(x = @x, y = @y) : 0)) * (@angle - locator.pose.angle);
+		}
+	}
+	
+	target state done
+	{
+		action {
+		          motion.type = stand;
+                  motion.walk_target.x = @x;
+                  motion.walk_target.y = @y;
+                  motion.walk_target.rot = @angle;
+			
+		}
+	}
+}
+ 
+ 

@@ -1,0 +1,36 @@
+/** Symbols which are used for selecting different head control modes. */
+namespace head_control_symbols("Head Control Symbols")
+{
+  /** The head motion control modes. */
+  enum head.control_mode internal
+  {
+    none,
+    look_at_ball,
+    look_down,
+    look_left,
+    look_right,
+    look_scan_area_in_front,
+    look_up,
+    look_up_and_down,
+    look_down_left_and_right,
+    look_at_kicker,
+    look_striker,
+    look_at_global_ball,
+    look_active_synced,
+    look_keeper,
+    look_at_ball_duel,
+    look_left_and_right,
+    look_at_ball_supporter,
+    look_around,
+    look_localization,
+    scan_for_ball,
+    search_ball,
+    look_active,
+    look_active_with_ball,
+    look_active_without_ball,
+    look_avoid
+  };
+
+  /** The currently selected head control mode. */
+  enum head.control_mode internal head.control_mode;
+}

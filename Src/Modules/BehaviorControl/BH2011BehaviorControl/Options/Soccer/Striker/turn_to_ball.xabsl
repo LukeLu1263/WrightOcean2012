@@ -1,0 +1,43 @@
+option turn_to_ball
+{
+   initial state turn_to_ball
+   {
+ decision
+ {
+ if(abs(value = ball.angle) < 5)
+ {
+ goto go;
+ }
+ else
+ {
+ stay;
+ }
+ }
+ action
+ {
+      motion.type = walk;
+      motion.walk_target.x = 0;
+      motion.walk_target.y = 0;
+      motion.walk_target.rot = ball.angle;
+      motion.walk_speed = 50;
+      head.control_mode =  look_at_ball;
+    
+    }
+   }
+
+
+
+  state go
+  {
+
+    action
+    {
+      motion.type = walk;
+      motion.walk_target.x = ball.x;
+      motion.walk_target.y = 0;
+      motion.walk_target.rot = 0;
+      motion.walk_speed = ball.x<400?25:80;
+      head.control_mode = state_time % 2000 < 1000 ? look_at_ball : look_up_and_down;
+    }
+ }
+}

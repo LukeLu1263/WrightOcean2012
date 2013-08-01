@@ -1,0 +1,121 @@
+requires "BH"
+requires "Geometry"
+requires "../Skills/SearchForBall.bs"
+requires "../Skills/KickBallTo.bs"
+
+task getTargetSide()
+  bool left = true
+  if(Math::random() < 0.5)
+    left = false
+
+  Math::Vector2f ballField
+  for(; true;)
+
+    ballField = Common::relative2FieldVector(input.ball.model.position)
+
+    if(ballField.y > 200)
+      left = false
+    else if(ballField.y < -200)
+      left = true
+
+    if(left)
+      yield 2
+    else
+      yield 3
+
+func getTarget() : Math::Vector2f
+  Math::Vector2f target
+  target.x = 3000.0
+  getTargetSide()
+  if(taskState(getTargetSide) == 2)
+    target.y = -350.0
+  else
+    target.y = 450.0
+
+  return target
+
+task ballIsDead()
+  Math::Pose2D bPose
+  Math::Pose2D relBPose
+  bPose.rotation = 0.0
+  bPose.translation.x = 2000.0
+
+  bool goodEnough = false
+
+  for(; true; yield)
+    bPose.translation.y = Common::relative2FieldVector(input.ball.model.position).y
+    relBPose = Common::field2RelativePose(bPose)
+
+    if(relBPose.translation.squareAbs() < Math::sqri(50) and \
+       Math::fabs(relBPose.rotation) < Math::fromDegrees(5.0))
+      goodEnough = true
+    else if(relBPose.translation.squareAbs() > Math::sqri(250) or \
+            Math::fabs(relBPose.rotation) > Math::fromDegrees(15.0))
+      goodEnough = false
+
+    if(goodEnough)
+      Motion::stand()
+      HeadControl::lookActive(0.7)
+    else
+      Motion::walkToPose(relBPose, 100.0, false)
+      HeadControl::lookActive(0.8)
+
+#kick the ball into the goal if outside the penaltybox
+#otherwise go next to the ball / penaltybox and wait
+task kickOrGetNextTo()
+  #====================================
+  func isBallInPenaltyBox() : bool
+    #ignore penalty box in the last 15 seconds
+    if(input.game.secsRemaining < 15)
+      return false
+
+    Math::Vector2f topRight
+    topRight.x = 30000.0 #far far away....
+    topRight.y = 1100.0
+    Math::Vector2f bottomLeft
+    bottomLeft.x = 2400.0
+    bottomLeft.y = -1000.0
+    return Geometry::isPointInsideRectangle(bottomLeft,
+                                            topRight,
+                                            Common::relative2FieldVector(input.ball.model.position))
+  #====================================
+  for(; true; )
+    #get next to penalty box if ball inside it
+    for(; isBallInPenaltyBox(); yield)
+      ballIsDead()
+
+    #goto ball and kick to target
+    for(; !isBallInPenaltyBox(); yield)
+      KickBallTo::kickBallTo(getTarget(), BH::KickType::bikeForward)
+      if(taskState(KickBallTo::kickBallTo) == TaskState::done)
+        break
+
+task play()
+  #====================================
+  func missingBall() : bool
+    return input.time - input.ball.lastSeen > 3000
+  #====================================
+
+  #hmmmm we need some check here whether we are the kicking team
+  #but I don't see how to do it when considering a penalty shoot from
+  #withing the game...
+  #this only works for penalty shootout
+  #disabled for CodeRelease
+  #for(; input.team.color == BH::Team::blue; yield)
+  #  Motion::stand()
+  #  HeadControl::lookDown()
+
+  #look around for a few seconds to regain localization
+  int startTime = input.time
+  for(; input.time - startTime < 3000; yield)
+    Motion::stand()
+    HeadControl::lookActive(0.7)
+
+  for(;true;)
+
+    for(; missingBall(); yield)
+      SearchForBall::searchForBall()
+
+    for(; !missingBall(); yield)
+      kickOrGetNextTo()
+

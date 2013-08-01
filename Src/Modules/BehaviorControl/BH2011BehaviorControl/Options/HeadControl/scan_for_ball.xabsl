@@ -1,0 +1,168 @@
+option scan_for_ball
+{  
+  initial state look_center
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (!head.is_moving && state_time > 200 || state_time > 600)
+        goto look_up_left;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = none;
+      head.mode = pan_tilt;
+      head.pan = 0;
+      head.tilt = -5;
+      head.speed = 150;
+    }
+  } 
+  
+  state look_down_left
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 950)
+        goto look_left;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = none;
+      head.mode = pan_tilt;
+      head.pan = 40;
+      head.tilt = -30;
+      head.speed = 150;
+    }  
+  }
+  
+  state look_down_right
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 750)
+        goto look_down_left;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = none;
+      head.mode = pan_tilt;
+      head.pan = -40;
+      head.tilt = -30;
+      head.speed = 150;
+    }
+  } 
+  
+  state look_up_right
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 950)
+        goto look_down_right;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = none;
+      head.mode = pan_tilt;
+      head.pan = -40;
+      head.tilt = 20;
+      head.speed = 150;
+    }  
+  }
+  
+  state look_up_left
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 850)
+        goto look_up_right;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = none;
+      head.mode = pan_tilt;
+      head.pan = 40;
+      head.tilt = 20;
+      head.speed = 150;
+    }
+  } 
+    
+  state look_left
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (state_time > 700)
+        goto finished;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = none;
+      head.mode = pan_tilt;
+      head.pan = 40;
+      head.tilt = -5;
+      head.speed = 150;
+    }
+  } 
+  
+  target state finished
+  {
+    decision
+    {
+      if (ball.was_seen)
+        goto look_at_ball;
+      else if (!head.is_moving && state_time > 200 || state_time > 600)
+        goto look_up_left;
+      else
+        stay;
+    }
+    action
+    {
+      head.control_mode = none;
+      head.mode = pan_tilt;
+      head.pan = 0;
+      head.tilt = -5;
+      head.speed = 150;
+    }
+  }
+    
+  state look_at_ball
+  {
+    decision
+    {
+      if (ball.time_since_last_seen > 3000 || state_time > 5000)
+        goto look_center;
+      else
+        stay;
+    }    
+    action
+    {
+      head.mode = target_on_ground;
+      head.target.x = ball.x;
+      head.target.y = ball.y;
+      head.target.z = 35;
+      head.speed = 100;
+    }
+  }
+}

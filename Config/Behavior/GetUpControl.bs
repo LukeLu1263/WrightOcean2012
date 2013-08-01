@@ -1,0 +1,24 @@
+requires "Tools/Motion.bs"
+requires "HeadControls/HeadControl.bs"
+
+task getUpControl()
+  Common::playSound(BH::Sounds::marioInjury)
+
+  #select getUpMotion depending on fallDownState.direction
+  int getUpMotion
+  if(input.fallDownState.direction == BH::FallDownDirection::back)
+    getUpMotion = BH::SpecialAction::standUpBack
+  else if(input.fallDownState.direction == BH::FallDownDirection::front)
+    getUpMotion = BH::SpecialAction::standUpFront
+  else
+    #"skip" frame if neither on front nor on back
+    Motion::stand()
+    HeadControl::lookStraight()
+    yield TaskState::done
+
+  #execute getUpMotion
+  for(; true; yield)
+    Motion::executeSpecialAction(getUpMotion, false)
+    if(taskState(Motion::executeSpecialAction) == TaskState::done)
+      break
+

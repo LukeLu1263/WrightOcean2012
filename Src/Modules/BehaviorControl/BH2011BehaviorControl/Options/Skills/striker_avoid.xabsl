@@ -1,0 +1,110 @@
+option striker_avoid {
+  initial state decide_side {
+    decision {
+      //if(state_time < 500) {
+      //  stay;
+      //} else 
+      if(obstacle.vision.leftRatio<=0.2&&obstacle.vision.rightRatio<=0.2)
+        goto backwards_and_turn;
+      else if
+//(obstacle.distance_to_closest_left > obstacle.distance_to_closest_right)
+(obstacle.vision.leftRatio > obstacle.vision.rightRatio)
+      {
+        goto move_left;
+      } else {
+        goto move_right;
+      }
+    }
+    action {
+      motion.type = stand;
+
+      head.control_mode = look_avoid;
+      //head.use_active_vision = false;
+    }
+  }
+	state backwards_and_turn
+	{
+		decision
+		{
+	if(state_time>1000&&(obstacle.vision.leftRatio>0.5||obstacle.vision.rightRatio>0.5))
+		goto decide_side;
+		else 
+		stay;
+		}
+		action
+		{
+			head.control_mode = look_avoid;
+            motion.type = walk;
+            motion.walk_speed.x = -50;      
+            motion.walk_speed.y = 0;
+            motion.walk_speed.rot = 0; 
+		}
+	}
+  state move_left {
+    decision {
+      if (state_time > 2500 || 
+	   (obstacle.vision.rightRatio > 0.95 ) ||
+	   (obstacle.vision.rightRatio > 0.85 && 
+	   obstacle.distance_to_closest_center_right > 300) ||
+	   obstacle.distance_to_closest_center_right> 400){
+        goto end;
+      } else {
+        stay;
+      }
+    } 
+    action {
+      head.control_mode = look_left;
+      //head.use_active_vision = false;
+
+      motion.type = walk;
+      motion.walk_speed.x = 0;
+      motion.walk_speed.y = 50;
+      motion.walk_speed.rot = 0;
+
+    //  sound = left;
+    }
+  }
+
+  state move_right {
+    decision {
+      if (state_time > 2500 ||
+	   (obstacle.vision.leftRatio > 0.95 ) ||
+	   (obstacle.vision.leftRatio > 0.85 &&
+	   obstacle.distance_to_closest_center_left> 300) ||
+	   obstacle.distance_to_closest_center_left > 400){
+        goto end;
+      } else {
+        stay;
+      }
+    } 
+    action {
+      head.control_mode = look_right;
+      //head.use_active_vision = false;
+
+      motion.type = walk;
+      motion.walk_speed.x = 0;
+      motion.walk_speed.y = -50;
+      motion.walk_speed.rot = 0;
+
+    //  sound = right;
+    }
+  }
+
+  target state end{
+    decision {
+      stay;
+    }
+    action {
+    motion.type = stand;
+    }
+  }
+}
+/*
+(obstacle.vision.rightRatio > 0.7 ||
+          obstacle.distance_to_center_right_obstacle > 300)
+(obstacle.distance_to_center_right_obstacle
+      		 + obstacle.distance_to_right_obstacle <
+		 obstacle.distance_to_center_left_obstacle
+		 + obstacle.distance_to_left_obstacle
+      		 )
+	  */

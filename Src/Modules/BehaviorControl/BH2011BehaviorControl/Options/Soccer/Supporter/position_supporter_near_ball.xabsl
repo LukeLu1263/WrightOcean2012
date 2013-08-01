@@ -1,0 +1,134 @@
+option position_supporter_near_ball
+{
+	initial state choose_side
+	{
+		decision
+		{
+			if(ball.seen.y > 0)
+				goto position_left_ball_kown;
+			else if(ball.seen.y < 0)
+				goto position_right_ball_kown;
+			else
+				stay;
+		}
+		action
+		{
+			motion.type = stand;
+			head.control_mode = look_at_ball;
+		}
+	}
+
+	state position_right_ball_kown
+	{
+		decision
+		{
+			if(ball.time_since_last_seen > 3000)
+				goto ball_not_known_after_position_right;
+			else if(ball.time_since_last_seen < 1000)
+				goto position_right_ball_seen;
+			else
+				stay;
+		}
+		action
+		{
+			motion.type = walk;
+			motion.walk_target.x = ball.x - 150;
+			motion.walk_target.y = ball.y + 700;
+			motion.walk_target.rot = ball.angle;
+			motion.walk_speed = 80;
+			head.control_mode = look_at_ball;
+		}
+	}
+	
+	state position_left_ball_kown
+	{
+		decision
+		{
+			if(ball.time_since_last_seen > 3000)
+				goto ball_not_known_after_position_left;
+			else if(ball.time_since_last_seen < 1000)
+				goto position_left_ball_seen;
+			else
+				stay;
+		}
+		action
+		{
+			motion.type = walk;
+			motion.walk_target.x = ball.x - 150;
+			motion.walk_target.y = ball.y - 700;
+			motion.walk_target.rot = ball.angle;
+			motion.walk_speed = 80;
+			head.control_mode = look_at_ball;
+		}
+	}
+
+	state position_left_ball_seen
+	{
+		decision
+		{
+			if(ball.time_since_last_seen > 3000)
+				goto ball_not_known_after_position_left;
+			else
+				stay;
+		}
+		action
+		{
+			motion.type = walk;
+			motion.walk_target.x = ball.x - 150;
+			motion.walk_target.y = ball.y - 700;
+			motion.walk_target.rot = ball.angle;
+			motion.walk_speed = 100;
+			head.control_mode = look_at_ball;
+		}
+	}
+
+	state position_right_ball_seen
+	{
+		decision
+		{
+			if(ball.time_since_last_seen > 3000)
+				goto ball_not_known_after_position_right;
+			else
+				stay;
+		}
+		action
+		{
+			motion.type = walk;
+			motion.walk_target.x = ball.x - 150;
+			motion.walk_target.y = ball.y + 700;
+			motion.walk_target.rot = ball.angle;
+			motion.walk_speed = 100;
+			head.control_mode = look_at_ball;
+		}
+	}
+
+	state ball_not_known_after_position_right
+	{
+		decision
+		{
+			if(ball.time_since_last_seen < 1000)
+				goto position_right_ball_seen;
+			else
+				stay;
+		}
+		action
+		{
+			turn_for_ball();
+		}
+	}
+
+	state ball_not_known_after_position_left
+	{
+		decision
+		{
+			if(ball.time_since_last_seen < 1000)
+				goto position_left_ball_seen;
+			else
+				stay;
+		}
+		action
+		{
+			turn_for_ball();
+		}
+	}
+}
